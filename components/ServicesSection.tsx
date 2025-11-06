@@ -1,22 +1,11 @@
 "use client";
 
-import { Home as HomeIcon, MessageCircle } from "lucide-react";
 import SunCard from "@/components/ui/SunCard";
 import SectionTitle from "@/components/ui/SectionTitle";
 import Button from "@/components/ui/Button";
+import { allServices } from "@/data/services";
 
-const mainServices = [
-  {
-    title: "訪問看護",
-    description: "ご自宅での看護ケアを提供します。専門的な看護技術と温かい心でサポートします。",
-    icon: HomeIcon,
-  },
-  {
-    title: "健康相談",
-    description: "看護師による健康相談サービス。日々の健康管理から専門的なアドバイスまで。",
-    icon: MessageCircle,
-  },
-];
+const mainServices = allServices.slice(0, 2);
 
 export default function ServicesSection() {
   return (
