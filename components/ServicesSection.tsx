@@ -3,6 +3,7 @@
 import SunCard from "@/components/ui/SunCard";
 import SectionTitle from "@/components/ui/SectionTitle";
 import Button from "@/components/ui/Button";
+import ImagePlaceholder from "@/components/ui/ImagePlaceholder";
 import { allServices } from "@/data/services";
 
 const mainServices = allServices.slice(0, 2);
@@ -45,32 +46,10 @@ export default function ServicesSection() {
 
                 {/* 画像部分 */}
                 <div className="flex-1 w-full flex">
-                  <div className="relative w-full rounded-2xl overflow-hidden shadow-xl group-hover:shadow-2xl transition-all duration-300 bg-slate-100 flex-1" style={{ aspectRatio: '4/3' }}>
-                    {/* グリッドパターン */}
-                    <div className="absolute inset-0 opacity-30" style={{
-                      backgroundImage: `
-                        linear-gradient(45deg, #cbd5e1 25%, transparent 25%),
-                        linear-gradient(-45deg, #cbd5e1 25%, transparent 25%),
-                        linear-gradient(45deg, transparent 75%, #cbd5e1 75%),
-                        linear-gradient(-45deg, transparent 75%, #cbd5e1 75%)
-                      `,
-                      backgroundSize: '20px 20px',
-                      backgroundPosition: '0 0, 0 10px, 10px -10px, -10px 0px'
-                    }}></div>
-                    
-                    {/* 中央のアイコン */}
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="w-24 h-24 rounded-full bg-white/80 backdrop-blur-sm shadow-lg flex items-center justify-center border-2 border-dashed border-slate-300">
-                        <IconComponent className="w-12 h-12 text-slate-400" />
-                      </div>
-                    </div>
-                    
-                    {/* 角の装飾 */}
-                    <div className="absolute top-4 left-4 w-8 h-8 border-t-2 border-l-2 border-slate-300"></div>
-                    <div className="absolute top-4 right-4 w-8 h-8 border-t-2 border-r-2 border-slate-300"></div>
-                    <div className="absolute bottom-4 left-4 w-8 h-8 border-b-2 border-l-2 border-slate-300"></div>
-                    <div className="absolute bottom-4 right-4 w-8 h-8 border-b-2 border-r-2 border-slate-300"></div>
-                  </div>
+                  <ImagePlaceholder 
+                    icon={IconComponent} 
+                    className="shadow-xl group-hover:shadow-2xl transition-all duration-300 flex-1" 
+                  />
                 </div>
               </div>
             );
