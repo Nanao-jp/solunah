@@ -7,15 +7,15 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid md:grid-cols-3 gap-8 mb-8">
           <div>
-            <h3 className="text-2xl font-bold mb-4 text-slate-900">
+            <h3 className="text-xl font-light mb-4 text-slate-900 tracking-wide">
               SOLUNA
             </h3>
-            <p className="text-slate-600">
+            <p className="text-slate-600 font-light">
               新しい看護の形を、あなたに
             </p>
           </div>
           <div>
-            <h4 className="text-lg font-semibold mb-4 text-slate-900">リンク</h4>
+            <h4 className="text-base font-light mb-4 text-slate-900 tracking-wide">リンク</h4>
             <ul className="space-y-2 text-slate-600">
               <li>
                 <Link href="/" className="flex items-center gap-2 hover:text-slate-900 transition-colors">
@@ -44,17 +44,17 @@ export default function Footer() {
             </ul>
           </div>
           <div>
-            <h4 className="text-lg font-semibold mb-4 text-slate-900 flex items-center gap-2">
+            <h4 className="text-base font-light mb-4 text-slate-900 flex items-center gap-2 tracking-wide">
               <Mail className="w-5 h-5" />
               お問い合わせ
             </h4>
-            <p className="text-slate-600 mb-2">株式会社SOLUNA</p>
-            <p className="text-slate-600">
+            <p className="text-slate-600 mb-2 font-light">株式会社SOLUNA</p>
+            <p className="text-slate-600 font-light">
               保険外看護サービス「YOURNURSE」
             </p>
           </div>
         </div>
-        <div className="border-t border-slate-200/50 pt-8 text-center text-slate-600">
+        <div className="border-t border-slate-200/50 pt-8 text-center text-slate-600 font-light">
           <p>&copy; {new Date().getFullYear()} 株式会社SOLUNA. All rights reserved.</p>
         </div>
       </div>
