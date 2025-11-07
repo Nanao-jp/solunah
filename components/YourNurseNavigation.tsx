@@ -4,19 +4,12 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-export default function Navigation() {
+export default function YourNurseNavigation() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isBusinessMenuOpen, setIsBusinessMenuOpen] = useState(false);
+  const [isSiteSwitcherOpen, setIsSiteSwitcherOpen] = useState(false);
   const pathname = usePathname();
-  const businessMenuRef = useRef<HTMLDivElement>(null);
-
-  const isCurrentSite = (path: string) => {
-    if (path === "/") {
-      return !pathname?.startsWith("/your-nurse") && !pathname?.startsWith("/insurance-nursing");
-    }
-    return pathname?.startsWith(path);
-  };
+  const siteSwitcherRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -29,36 +22,50 @@ export default function Navigation() {
   // ウィンドウ外タップで事業切り替えメニューを閉じる
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (businessMenuRef.current && !businessMenuRef.current.contains(event.target as Node)) {
-        setIsBusinessMenuOpen(false);
+      if (siteSwitcherRef.current && !siteSwitcherRef.current.contains(event.target as Node)) {
+        setIsSiteSwitcherOpen(false);
       }
     };
 
-    if (isBusinessMenuOpen) {
+    if (isSiteSwitcherOpen) {
       document.addEventListener("mousedown", handleClickOutside);
     }
 
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [isBusinessMenuOpen]);
+  }, [isSiteSwitcherOpen]);
 
   const navItems = [
-    { name: "ニュース", href: "/news" },
-    { name: "会社情報", href: "/company" },
-    { name: "お問い合わせ", href: "/contact" },
+    { name: "ホーム", href: "/your-nurse" },
+    { name: "サービス", href: "/your-nurse/services" },
+    { name: "特徴", href: "/your-nurse/features" },
+    { name: "料金", href: "/your-nurse/pricing" },
+    { name: "お問い合わせ", href: "/your-nurse/contact" },
   ];
 
-  const businessMenuItems = [
-    { name: "YOUR NURSE（保険外看護）", href: "/your-nurse" },
-    { name: "保険内介護", href: "/insurance-nursing" },
-  ];
+  const isActive = (href: string) => {
+    if (href === "/your-nurse") {
+      return pathname === "/your-nurse";
+    }
+    return pathname?.startsWith(href);
+  };
+
+  const isCurrentSite = (path: string) => {
+    if (path === "/your-nurse") {
+      return pathname?.startsWith("/your-nurse");
+    }
+    if (path === "/") {
+      return !pathname?.startsWith("/your-nurse") && !pathname?.startsWith("/insurance-nursing");
+    }
+    return pathname?.startsWith(path);
+  };
 
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled
-          ? "bg-white/90 backdrop-blur-xl shadow-lg shadow-slate-200/50 border-b border-slate-200/50"
+          ? "bg-white/90 backdrop-blur-xl shadow-lg shadow-orange-200/50 border-b border-orange-200/50"
           : "bg-transparent"
       }`}
     >
@@ -102,21 +109,15 @@ export default function Navigation() {
 
           {/* Mobile Site Switcher - 左側に配置 */}
           <div className="md:hidden">
-            <div className="relative" ref={businessMenuRef}>
+            <div className="relative" ref={siteSwitcherRef}>
               <button
-                onClick={() => setIsBusinessMenuOpen(!isBusinessMenuOpen)}
-                className="flex items-center gap-1.5 px-3 py-2 text-sm font-semibold text-slate-900 hover:text-orange-600 transition-colors"
+                onClick={() => setIsSiteSwitcherOpen(!isSiteSwitcherOpen)}
+                className="flex items-center gap-1.5 px-3 py-2 text-sm font-semibold text-orange-600 transition-colors"
               >
-                <span>
-                  {isCurrentSite("/your-nurse") 
-                    ? "YOUR NURSE" 
-                    : isCurrentSite("/insurance-nursing")
-                    ? "保険内介護"
-                    : "SOLUNAH"}
-                </span>
+                <span>YOUR NURSE</span>
                 <svg
                   className={`w-4 h-4 transition-transform ${
-                    isBusinessMenuOpen ? "rotate-180" : ""
+                    isSiteSwitcherOpen ? "rotate-180" : ""
                   }`}
                   fill="none"
                   stroke="currentColor"
@@ -132,8 +133,8 @@ export default function Navigation() {
               </button>
               
               {/* 事業切り替えドロップダウン */}
-              {isBusinessMenuOpen && (
-                <div className="absolute top-full left-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-slate-200 overflow-hidden z-50">
+              {isSiteSwitcherOpen && (
+                <div className="absolute top-full left-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-orange-200 overflow-hidden z-50">
                   <Link
                     href="/"
                     className={`block px-4 py-3 text-sm font-semibold transition-colors ${
@@ -142,7 +143,7 @@ export default function Navigation() {
                         : "text-slate-700 hover:bg-orange-50 hover:text-orange-600"
                     }`}
                     onClick={() => {
-                      setIsBusinessMenuOpen(false);
+                      setIsSiteSwitcherOpen(false);
                     }}
                   >
                     SOLUNAH
@@ -155,7 +156,7 @@ export default function Navigation() {
                         : "text-slate-700 hover:bg-orange-50 hover:text-orange-600"
                     }`}
                     onClick={() => {
-                      setIsBusinessMenuOpen(false);
+                      setIsSiteSwitcherOpen(false);
                     }}
                   >
                     YOUR NURSE
@@ -168,7 +169,7 @@ export default function Navigation() {
                         : "text-slate-700 hover:bg-orange-50 hover:text-orange-600"
                     }`}
                     onClick={() => {
-                      setIsBusinessMenuOpen(false);
+                      setIsSiteSwitcherOpen(false);
                     }}
                   >
                     保険内介護
@@ -179,65 +180,16 @@ export default function Navigation() {
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8 ml-auto">
-            {/* Home Link - First */}
-            <Link
-              href="/"
-              className="text-sm text-slate-700 font-medium tracking-wide hover:text-orange-600 transition-colors uppercase"
-            >
-              ホーム
-            </Link>
-
-            {/* Business Menu Dropdown */}
-            <div
-              className="relative"
-              onMouseEnter={() => setIsBusinessMenuOpen(true)}
-              onMouseLeave={() => setIsBusinessMenuOpen(false)}
-            >
-              <button className="text-sm text-slate-700 font-medium tracking-wide hover:text-orange-600 transition-colors uppercase flex items-center gap-1">
-                事業紹介
-                <svg
-                  className={`w-4 h-4 transition-transform ${
-                    isBusinessMenuOpen ? "rotate-180" : ""
-                  }`}
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M19 9l-7 7-7-7"
-                  />
-                </svg>
-              </button>
-              {isBusinessMenuOpen && (
-                <div 
-                  className="absolute top-full left-0 pt-2 w-64"
-                  onMouseEnter={() => setIsBusinessMenuOpen(true)}
-                  onMouseLeave={() => setIsBusinessMenuOpen(false)}
-                >
-                  <div className="bg-white/95 backdrop-blur-xl rounded-lg shadow-lg border border-slate-200/50 overflow-hidden">
-                    {businessMenuItems.map((item) => (
-                      <Link
-                        key={item.name}
-                        href={item.href}
-                        className="block px-4 py-3 text-sm text-slate-700 font-medium tracking-wide hover:bg-orange-50 hover:text-orange-600 transition-colors"
-                      >
-                        {item.name}
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-
+          <div className="hidden md:flex items-center space-x-6 ml-auto">
             {navItems.map((item) => (
               <Link
                 key={item.name}
                 href={item.href}
-                className="text-sm text-slate-700 font-medium tracking-wide hover:text-orange-600 transition-colors uppercase"
+                className={`text-sm font-medium tracking-wide transition-colors px-3 py-2 rounded-lg ${
+                  isActive(item.href)
+                    ? "text-orange-600 bg-orange-50"
+                    : "text-slate-700 hover:text-orange-600 hover:bg-orange-50/50"
+                }`}
               >
                 {item.name}
               </Link>
@@ -273,64 +225,17 @@ export default function Navigation() {
 
       {/* Mobile Menu - ページのみ */}
       {isMobileMenuOpen && (
-        <div className="md:hidden bg-white/95 backdrop-blur-xl border-t border-slate-200/50">
+        <div className="md:hidden bg-white/95 backdrop-blur-xl border-t border-orange-200/50">
           <div className="px-4 py-4 space-y-2">
-            {/* Home Link */}
-            <Link
-              href="/"
-              className="block text-sm text-slate-700 font-medium py-2 px-3 rounded-lg hover:bg-orange-50 hover:text-orange-600 transition-colors uppercase"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              ホーム
-            </Link>
-
-            {/* Business Menu for Mobile */}
-            <div>
-              <button
-                className="block w-full text-left text-sm text-slate-700 font-medium py-2 px-3 rounded-lg hover:bg-orange-50 hover:text-orange-600 transition-colors uppercase flex items-center justify-between"
-                onClick={() => setIsBusinessMenuOpen(!isBusinessMenuOpen)}
-              >
-                <span>事業紹介</span>
-                <svg
-                  className={`w-4 h-4 transition-transform ${
-                    isBusinessMenuOpen ? "rotate-180" : ""
-                  }`}
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M19 9l-7 7-7-7"
-                  />
-                </svg>
-              </button>
-              {isBusinessMenuOpen && (
-                <div className="pl-4 mt-2 space-y-2">
-                  {businessMenuItems.map((item) => (
-                    <Link
-                      key={item.name}
-                      href={item.href}
-                      className="block text-sm text-slate-600 font-medium py-2 px-3 rounded-lg hover:bg-orange-50 hover:text-orange-600 transition-colors"
-                      onClick={() => {
-                        setIsMobileMenuOpen(false);
-                        setIsBusinessMenuOpen(false);
-                      }}
-                    >
-                      {item.name}
-                    </Link>
-                  ))}
-                </div>
-              )}
-            </div>
-
             {navItems.map((item) => (
               <Link
                 key={item.name}
                 href={item.href}
-                className="block text-sm text-slate-700 font-medium py-2 px-3 rounded-lg hover:bg-orange-50 hover:text-orange-600 transition-colors uppercase"
+                className={`block text-sm font-medium py-2 px-3 rounded-lg transition-colors ${
+                  isActive(item.href)
+                    ? "text-orange-600 bg-orange-50"
+                    : "text-slate-700 hover:text-orange-600 hover:bg-orange-50/50"
+                }`}
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 {item.name}
@@ -342,3 +247,4 @@ export default function Navigation() {
     </nav>
   );
 }
+

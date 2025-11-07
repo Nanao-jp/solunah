@@ -1,20 +1,16 @@
 "use client";
 
-import Navigation from "@/components/Navigation";
-import Footer from "@/components/Footer";
 import SectionTitle from "@/components/ui/SectionTitle";
-import { allServices } from "@/data/services";
 import Image from "next/image";
-import { Home, MessageCircle, Users, Clock } from "lucide-react";
+import Link from "next/link";
 import Glassmorphism from "@/components/ui/Glassmorphism";
 import AnimatedBackground from "@/components/ui/AnimatedBackground";
-import YourNurseFeaturesSection from "@/components/YourNurseFeaturesSection";
+import InteractiveYourNurseSection from "@/components/InteractiveYourNurseSection";
+import { ArrowRight } from "lucide-react";
 
 export default function YourNursePage() {
   return (
-    <main className="min-h-screen">
-      <Navigation />
-      
+    <>
       {/* ヒーローセクション */}
       <section className="relative min-h-[80vh] flex items-center justify-center overflow-hidden bg-white pt-32 pb-20 px-4 sm:px-6 lg:px-8">
         <AnimatedBackground />
@@ -38,99 +34,91 @@ export default function YourNursePage() {
                   />
                 </div>
                 
-                <h1 className="text-4xl md:text-5xl lg:text-6xl font-light text-slate-900 mb-6 tracking-wide">
+                <h1 className="text-4xl md:text-5xl lg:text-6xl font-light text-slate-900 tracking-wide">
                   保険外看護サービス
                 </h1>
-                
-                <p className="text-xl md:text-2xl text-slate-700 text-center max-w-3xl leading-relaxed font-light mb-4">
-                  新しい看護の形を、あなたに
-                </p>
-                
-                <p className="text-base md:text-lg text-slate-600 text-center max-w-2xl leading-relaxed font-light">
-                  静かに寄り添い、温かく明るく、あなたの健康をサポートします
-                </p>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* YOUR NURSEの特徴セクション（ロゴ付き） */}
-      <YourNurseFeaturesSection />
+      {/* インタラクティブ体験セクション */}
+      <InteractiveYourNurseSection />
 
-      {/* サービス紹介セクション */}
-      <section className="py-32 px-4 sm:px-6 lg:px-8">
+      {/* クイックリンクセクション */}
+      <section className="py-32 px-4 sm:px-6 lg:px-8 bg-slate-50/50">
         <div className="max-w-7xl mx-auto">
-          <SectionTitle title="サービス内容" />
+          <SectionTitle title="詳しく知る" />
           
-          <div className="space-y-24">
-            {allServices.map((service, index) => {
-              const IconComponent = service.icon;
-              
-              return (
-                <div
-                  key={index}
-                  className="flex flex-col md:flex-row items-stretch gap-12"
-                  style={{
-                    animation: `fadeInUp 0.6s ease-out ${index * 0.1}s both`,
-                  }}
-                >
-                  {/* テキスト部分 */}
-                  <div className="flex-1 w-full">
-                    <div className="h-full flex flex-col justify-center">
-                      <div className="mb-6">
-                        <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-500/20 to-orange-600/20 border border-orange-500/30 flex items-center justify-center">
-                          <IconComponent className="w-8 h-8 text-orange-500" />
-                        </div>
-                      </div>
-                      <h3 className="text-2xl md:text-3xl font-light mb-4 text-slate-900 tracking-wide">
-                        {service.title}
-                      </h3>
-                      <p className="text-base md:text-lg text-slate-600 leading-relaxed font-light">
-                        {service.description}
-                      </p>
-                    </div>
-                  </div>
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mt-16">
+            <Link
+              href="/your-nurse/services"
+              className="group relative p-8 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all hover:-translate-y-1"
+            >
+              <h3 className="text-2xl font-light mb-4 text-slate-900 group-hover:text-orange-600 transition-colors">
+                サービス
+              </h3>
+              <p className="text-slate-600 font-light mb-4">
+                訪問看護、健康相談、在宅ケアなど、充実したサービスをご用意しています。
+              </p>
+              <div className="flex items-center text-orange-500 font-medium">
+                詳しく見る
+                <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              </div>
+            </Link>
 
-                  {/* 画像部分 */}
-                  <div className="flex-1 w-full">
-                    <div className="relative w-full rounded-2xl overflow-hidden shadow-lg bg-gradient-to-br from-orange-50 to-amber-50" style={{ aspectRatio: '4/3' }}>
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="w-24 h-24 rounded-full bg-white/80 backdrop-blur-sm shadow-lg flex items-center justify-center border-2 border-orange-200">
-                          <IconComponent className="w-12 h-12 text-orange-500" />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
+            <Link
+              href="/your-nurse/features"
+              className="group relative p-8 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all hover:-translate-y-1"
+            >
+              <h3 className="text-2xl font-light mb-4 text-slate-900 group-hover:text-orange-600 transition-colors">
+                特徴
+              </h3>
+              <p className="text-slate-600 font-light mb-4">
+                YOUR NURSEが選ばれる理由。24時間サポート、温かいケア、柔軟なサービス。
+              </p>
+              <div className="flex items-center text-orange-500 font-medium">
+                詳しく見る
+                <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              </div>
+            </Link>
+
+            <Link
+              href="/your-nurse/pricing"
+              className="group relative p-8 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all hover:-translate-y-1"
+            >
+              <h3 className="text-2xl font-light mb-4 text-slate-900 group-hover:text-orange-600 transition-colors">
+                料金
+              </h3>
+              <p className="text-slate-600 font-light mb-4">
+                お客様のニーズに合わせた柔軟な料金プランをご用意しています。
+              </p>
+              <div className="flex items-center text-orange-500 font-medium">
+                詳しく見る
+                <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              </div>
+            </Link>
+
+            <Link
+              href="/your-nurse/contact"
+              className="group relative p-8 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all hover:-translate-y-1"
+            >
+              <h3 className="text-2xl font-light mb-4 text-slate-900 group-hover:text-orange-600 transition-colors">
+                お問い合わせ
+              </h3>
+              <p className="text-slate-600 font-light mb-4">
+                ご質問やご相談がございましたら、お気軽にお問い合わせください。
+              </p>
+              <div className="flex items-center text-orange-500 font-medium">
+                お問い合わせ
+                <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              </div>
+            </Link>
           </div>
         </div>
       </section>
-
-      {/* ロゴセクション */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-slate-50/50">
-        <div className="max-w-4xl mx-auto text-center">
-          <div
-            className="relative"
-            style={{
-              animation: `fadeInUp 0.8s ease-out both`,
-            }}
-          >
-            <Image
-              src="/your-nurse-logo2.png"
-              alt="YOUR NURSE Logo 2"
-              width={600}
-              height={300}
-              className="object-contain mx-auto"
-            />
-          </div>
-        </div>
-      </section>
-
-      <Footer />
-    </main>
+    </>
   );
 }
 
