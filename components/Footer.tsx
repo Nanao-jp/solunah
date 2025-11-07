@@ -8,7 +8,7 @@ export default function Footer() {
         <div className="grid md:grid-cols-3 gap-8 mb-8">
           <div>
             <h3 className="text-xl font-light mb-4 text-slate-900 tracking-wide">
-              SOLUNA
+              SOLUNAH
             </h3>
             <p className="text-slate-600 font-light">
               新しい看護の形を、あなたに
@@ -48,14 +48,14 @@ export default function Footer() {
               <Mail className="w-5 h-5" />
               お問い合わせ
             </h4>
-            <p className="text-slate-600 mb-2 font-light">株式会社SOLUNA</p>
+            <p className="text-slate-600 mb-2 font-light">株式会社SOLUNAH</p>
             <p className="text-slate-600 font-light">
               保険外看護サービス「YOURNURSE」
             </p>
           </div>
         </div>
         <div className="border-t border-slate-200/50 pt-8 text-center text-slate-600 font-light">
-          <p>&copy; {new Date().getFullYear()} 株式会社SOLUNA. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} 株式会社SOLUNAH. All rights reserved.</p>
         </div>
       </div>
     </footer>

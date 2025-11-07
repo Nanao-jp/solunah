@@ -6,7 +6,7 @@ import ImagePlaceholder from "@/components/ui/ImagePlaceholder";
 
 export default function Company() {
   const companyInfo = [
-    { label: "会社名", value: "株式会社SOLUNA" },
+    { label: "会社名", value: "株式会社SOLUNAH" },
     { label: "事業内容", value: "保険外看護サービス「YOURNURSE」" },
     { label: "理念", value: "新しい看護の形を、あなたに" },
   ];
@@ -33,7 +33,7 @@ export default function Company() {
               <h3 className="text-2xl md:text-3xl font-light mb-8 text-slate-900 tracking-wide">企業理念</h3>
               <div className="space-y-4 max-w-2xl mx-auto">
                 <p className="text-base md:text-lg text-slate-600 leading-relaxed font-light">
-                  株式会社SOLUNAは、静かで温かい看護サービスを提供しています。
+                  株式会社SOLUNAHは、静かで温かい看護サービスを提供しています。
                   静かに寄り添い、明るく温かく、お客様の健康をサポートします。
                 </p>
                 <p className="text-base md:text-lg text-slate-600 leading-relaxed font-light">

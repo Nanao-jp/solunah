@@ -10,8 +10,8 @@ const notoSansJP = Noto_Sans_JP({
 });
 
 export const metadata: Metadata = {
-  title: "株式会社SOLUNA | 保険外看護サービス YOURNURSE",
-  description: "株式会社SOLUNAは、保険外看護サービス「YOURNURSE」を提供しています。柔軟で質の高い看護サービスで、お客様の健康をサポートします。",
+  title: "株式会社SOLUNAH | 保険外看護サービス YOURNURSE",
+  description: "株式会社SOLUNAHは、保険外看護サービス「YOURNURSE」を提供しています。柔軟で質の高い看護サービスで、お客様の健康をサポートします。",
 };
 
 export default function RootLayout({
@@ -22,10 +22,16 @@ export default function RootLayout({
   return (
     <html lang="ja">
       <body
-        className={`${notoSansJP.variable} antialiased relative`}
+        className={`${notoSansJP.variable} antialiased`}
       >
-        <ParticleBackground />
-        {children}
+        {/* 固定ラッパー - backdrop共有用 */}
+        <div className="fixed inset-0 z-0">
+          <ParticleBackground />
+        </div>
+        {/* アプリ本体 */}
+        <div className="relative z-10">
+          {children}
+        </div>
       </body>
     </html>
   );

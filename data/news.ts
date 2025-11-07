@@ -27,8 +27,8 @@ export const allNewsItems: NewsItem[] = [
   {
     date: "2025年8月10日",
     category: "お知らせ",
-    title: "株式会社SOLUNA設立のお知らせ",
-    description: "この度、保険外看護サービス「YOURNURSE」を提供する株式会社SOLUNAを設立いたしました。",
+    title: "株式会社SOLUNAH設立のお知らせ",
+    description: "この度、保険外看護サービス「YOURNURSE」を提供する株式会社SOLUNAHを設立いたしました。",
   },
 ];
 

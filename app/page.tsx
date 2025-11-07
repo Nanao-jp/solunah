@@ -9,7 +9,7 @@ import SectionDivider from "@/components/ui/SectionDivider";
 
 export default function Home() {
   return (
-    <main className="min-h-screen relative z-10">
+    <main className="min-h-screen">
       <Navigation />
       <Hero />
       
