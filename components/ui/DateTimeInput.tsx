@@ -129,10 +129,6 @@ export default function DateTimeInput({
               strategy: "fixed",
             }}
             dayClassName={getDayClassName}
-            inputProps={{
-              readOnly: true,
-              inputMode: "none",
-            }}
           />
         ) : (
           <input
