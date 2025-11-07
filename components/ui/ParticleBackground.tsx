@@ -31,27 +31,37 @@ function ParticleBackground() {
       const ctx = canvas.getContext("2d");
       if (!ctx) return;
       
-      const animate = () => {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ballsRef.current.forEach((ball) => {
-          ball.x += ball.speedX;
-          ball.y += ball.speedY;
-          if (ball.x < ball.size || ball.x > canvas.width - ball.size) {
-            ball.speedX *= -1;
-          }
-          if (ball.y < ball.size || ball.y > canvas.height - ball.size) {
-            ball.speedY *= -1;
-          }
-          ctx.beginPath();
-          ctx.arc(ball.x, ball.y, ball.size, 0, Math.PI * 2);
-          ctx.globalAlpha = 0.4;
-          ctx.fillStyle = ball.color;
-          ctx.fill();
-          ctx.globalAlpha = 1.0;
-        });
+      // アニメーション（30fpsに制限）
+      let lastTime = 0;
+      const targetFPS = 30;
+      const frameInterval = 1000 / targetFPS;
+
+      const animate = (currentTime: number) => {
+        const elapsed = currentTime - lastTime;
+
+        if (elapsed >= frameInterval) {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          ballsRef.current.forEach((ball) => {
+            ball.x += ball.speedX;
+            ball.y += ball.speedY;
+            if (ball.x < ball.size || ball.x > canvas.width - ball.size) {
+              ball.speedX *= -1;
+            }
+            if (ball.y < ball.size || ball.y > canvas.height - ball.size) {
+              ball.speedY *= -1;
+            }
+            ctx.beginPath();
+            ctx.arc(ball.x, ball.y, ball.size, 0, Math.PI * 2);
+            ctx.globalAlpha = 0.4;
+            ctx.fillStyle = ball.color;
+            ctx.fill();
+            ctx.globalAlpha = 1.0;
+          });
+          lastTime = currentTime - (elapsed % frameInterval);
+        }
         animationFrameRef.current = requestAnimationFrame(animate);
       };
-      animate();
+      animate(0);
       
       // リサイズ処理
       const handleResize = () => {
@@ -125,36 +135,46 @@ function ParticleBackground() {
 
     isInitialized = true;
 
-    // アニメーション
-    const animate = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    // アニメーション（30fpsに制限）
+    let lastTime = 0;
+    const targetFPS = 30;
+    const frameInterval = 1000 / targetFPS;
 
-      ballsRef.current.forEach((ball) => {
-        // 位置更新
-        ball.x += ball.speedX;
-        ball.y += ball.speedY;
+    const animate = (currentTime: number) => {
+      const elapsed = currentTime - lastTime;
 
-        // 境界処理
-        if (ball.x < ball.size || ball.x > canvas.width - ball.size) {
-          ball.speedX *= -1;
-        }
-        if (ball.y < ball.size || ball.y > canvas.height - ball.size) {
-          ball.speedY *= -1;
-        }
+      if (elapsed >= frameInterval) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        // ボールを描画（透明度を上げる）
-        ctx.beginPath();
-        ctx.arc(ball.x, ball.y, ball.size, 0, Math.PI * 2);
-        ctx.globalAlpha = 0.4; // 透明度を上げる（薄くする）
-        ctx.fillStyle = ball.color;
-        ctx.fill();
-        ctx.globalAlpha = 1.0; // 透明度をリセット
-      });
+        ballsRef.current.forEach((ball) => {
+          // 位置更新
+          ball.x += ball.speedX;
+          ball.y += ball.speedY;
+
+          // 境界処理
+          if (ball.x < ball.size || ball.x > canvas.width - ball.size) {
+            ball.speedX *= -1;
+          }
+          if (ball.y < ball.size || ball.y > canvas.height - ball.size) {
+            ball.speedY *= -1;
+          }
+
+          // ボールを描画（透明度を上げる）
+          ctx.beginPath();
+          ctx.arc(ball.x, ball.y, ball.size, 0, Math.PI * 2);
+          ctx.globalAlpha = 0.4; // 透明度を上げる（薄くする）
+          ctx.fillStyle = ball.color;
+          ctx.fill();
+          ctx.globalAlpha = 1.0; // 透明度をリセット
+        });
+
+        lastTime = currentTime - (elapsed % frameInterval);
+      }
 
       animationFrameRef.current = requestAnimationFrame(animate);
     };
 
-    animate();
+    animate(0);
 
     // リサイズ処理（ボールは再生成しない）
     const handleResize = () => {
