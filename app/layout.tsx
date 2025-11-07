@@ -32,6 +32,8 @@ export default function RootLayout({
         <div className="relative z-10">
           {children}
         </div>
+        {/* react-datepicker用ポータル */}
+        <div id="datepicker-portal" />
       </body>
     </html>
   );
