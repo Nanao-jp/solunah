@@ -118,13 +118,12 @@ export default function DateTimeInput({
             placeholderText="日付を選択"
             locale={ja}
             calendarStartDay={1}
-            customInput={({ value, onClick }) => (
+            customInput={(props) => (
               <input
+                {...props}
                 type="text"
                 readOnly
                 inputMode="none"
-                value={value || ""}
-                onClick={onClick}
                 placeholder="日付を選択"
                 className="w-full px-4 py-3 rounded-lg border border-slate-300 bg-white/80 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all text-slate-700 cursor-pointer"
               />
