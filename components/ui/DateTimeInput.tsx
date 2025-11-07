@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Calendar } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { Calendar, X, Clock } from "lucide-react";
 import DatePicker from "react-datepicker";
 import { ja } from "date-fns/locale";
 
@@ -41,10 +41,44 @@ export default function DateTimeInput({
   zIndex,
 }: DateTimeInputProps) {
   const [isMounted, setIsMounted] = useState(false);
+  const [isTimeModalOpen, setIsTimeModalOpen] = useState(false);
+  const [tempHour, setTempHour] = useState(time ? time.split(":")[0] || "00" : "00");
+  const [tempMinute, setTempMinute] = useState(time ? time.split(":")[1] || "00" : "00");
+  const timeModalRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
+
+  useEffect(() => {
+    if (time) {
+      const [hour, minute] = time.split(":");
+      setTempHour(hour || "00");
+      setTempMinute(minute || "00");
+    }
+  }, [time]);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (timeModalRef.current && !timeModalRef.current.contains(event.target as Node)) {
+        setIsTimeModalOpen(false);
+      }
+    };
+
+    if (isTimeModalOpen) {
+      // メインページのスクロールを無効化
+      document.body.style.overflow = "hidden";
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      // スクロールを有効化
+      document.body.style.overflow = "";
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.body.style.overflow = "";
+    };
+  }, [isTimeModalOpen]);
 
   const handleHourChange = (hour: string) => {
     const minute = time ? time.split(":")[1] || "00" : "00";
@@ -54,6 +88,19 @@ export default function DateTimeInput({
   const handleMinuteChange = (minute: string) => {
     const hour = time ? time.split(":")[0] || "00" : "00";
     onTimeChange(`${hour}:${minute}`);
+  };
+
+  const handleTimeModalOpen = () => {
+    setIsTimeModalOpen(true);
+  };
+
+  const handleTimeModalClose = () => {
+    setIsTimeModalOpen(false);
+  };
+
+  const handleTimeConfirm = () => {
+    onTimeChange(`${tempHour}:${tempMinute}`);
+    setIsTimeModalOpen(false);
   };
 
   return (
@@ -71,6 +118,7 @@ export default function DateTimeInput({
             placeholderText="日付を選択"
             locale={ja}
             calendarStartDay={1}
+            readOnly
             className="w-full px-4 py-3 rounded-lg border border-slate-300 bg-white/80 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all text-slate-700"
             wrapperClassName="w-full relative"
             calendarClassName="!font-sans"
@@ -81,6 +129,10 @@ export default function DateTimeInput({
               strategy: "fixed",
             }}
             dayClassName={getDayClassName}
+            inputProps={{
+              readOnly: true,
+              inputMode: "none",
+            }}
           />
         ) : (
           <input
@@ -91,29 +143,87 @@ export default function DateTimeInput({
             className="w-full px-4 py-3 rounded-lg border border-slate-300 bg-white/80 backdrop-blur-sm text-slate-700"
           />
         )}
-        <div className="flex gap-2">
-          <select
-            value={time ? time.split(":")[0] || "00" : "00"}
-            onChange={(e) => handleHourChange(e.target.value)}
-            className="flex-1 px-4 py-3 rounded-lg border border-slate-300 bg-white/80 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all text-slate-700"
+        <div className="relative">
+          <button
+            type="button"
+            onClick={handleTimeModalOpen}
+            className="w-full px-4 py-3 rounded-lg border border-slate-300 bg-white/80 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all text-slate-700 flex items-center justify-between"
           >
-            {Array.from({ length: 24 }, (_, i) => (
-              <option key={i} value={String(i).padStart(2, "0")}>
-                {String(i).padStart(2, "0")}時
-              </option>
-            ))}
-          </select>
-          <select
-            value={time ? time.split(":")[1] || "00" : "00"}
-            onChange={(e) => handleMinuteChange(e.target.value)}
-            className="flex-1 px-4 py-3 rounded-lg border border-slate-300 bg-white/80 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all text-slate-700"
-          >
-            {[0, 15, 30, 45].map((m) => (
-              <option key={m} value={String(m).padStart(2, "0")}>
-                {String(m).padStart(2, "0")}分
-              </option>
-            ))}
-          </select>
+            <span className="flex items-center gap-2">
+              <Clock className="w-4 h-4 text-orange-500" />
+              {time ? `${time.split(":")[0]}時${time.split(":")[1]}分` : "時間を選択"}
+            </span>
+          </button>
+
+          {isTimeModalOpen && (
+            <div className="fixed inset-0 z-[99998] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+              <div
+                ref={timeModalRef}
+                className="bg-white rounded-2xl shadow-xl max-w-sm w-full p-6"
+              >
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-xl font-light text-slate-900">時間を選択</h3>
+                  <button
+                    type="button"
+                    onClick={handleTimeModalClose}
+                    className="text-slate-400 hover:text-slate-600 transition-colors"
+                  >
+                    <X className="w-6 h-6" />
+                  </button>
+                </div>
+
+                <div className="flex gap-4 mb-6">
+                  <div className="flex-1">
+                    <label className="block text-sm font-medium text-slate-700 mb-2">時</label>
+                    <div className="max-h-48 overflow-y-auto border border-slate-200 rounded-lg">
+                      {Array.from({ length: 24 }, (_, i) => (
+                        <button
+                          key={i}
+                          type="button"
+                          onClick={() => setTempHour(String(i).padStart(2, "0"))}
+                          className={`w-full px-4 py-2 text-left hover:bg-orange-50 transition-colors ${
+                            tempHour === String(i).padStart(2, "0")
+                              ? "bg-orange-100 text-orange-600 font-medium"
+                              : "text-slate-700"
+                          }`}
+                        >
+                          {String(i).padStart(2, "0")}時
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="flex-1">
+                    <label className="block text-sm font-medium text-slate-700 mb-2">分</label>
+                    <div className="max-h-48 overflow-y-auto border border-slate-200 rounded-lg">
+                      {[0, 15, 30, 45].map((m) => (
+                        <button
+                          key={m}
+                          type="button"
+                          onClick={() => setTempMinute(String(m).padStart(2, "0"))}
+                          className={`w-full px-4 py-2 text-left hover:bg-orange-50 transition-colors ${
+                            tempMinute === String(m).padStart(2, "0")
+                              ? "bg-orange-100 text-orange-600 font-medium"
+                              : "text-slate-700"
+                          }`}
+                        >
+                          {String(m).padStart(2, "0")}分
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={handleTimeConfirm}
+                  className="w-full px-4 py-3 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors font-medium"
+                >
+                  決定
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

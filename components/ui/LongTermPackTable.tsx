@@ -28,7 +28,7 @@ export default function LongTermPackTable() {
   const [mobileTab, setMobileTab] = useState<"original" | "pack">("original");
 
   return (
-    <div className="relative z-10">
+    <div className="relative">
       {/* モバイル用タブ */}
       <div className="md:hidden mb-6">
         <div className="flex gap-2 border-b border-slate-200">
