@@ -128,11 +128,12 @@ export default function ContactForm({ showPhone = false, onSubmit, initialMessag
           rows={8}
           value={formData.pricingResult || ""}
           onChange={handleChange}
-          className="w-full px-4 py-3 rounded-lg border border-slate-300 bg-white/80 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all resize-none font-mono text-sm"
+          readOnly
+          className="w-full px-4 py-3 rounded-lg border border-slate-300 bg-slate-50/80 backdrop-blur-sm focus:outline-none transition-all resize-none font-mono text-sm cursor-not-allowed"
           placeholder="料金シミュレーターで「この内容で問い合わせる」をクリックすると自動入力されます"
         />
         <p className="mt-1 text-xs text-slate-500 font-light">
-          料金シミュレーターで計算した結果が自動入力されます
+          料金シミュレーターで計算した結果が自動入力されます（編集不可）
         </p>
       </div>
 
