@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import SectionTitle from "@/components/ui/SectionTitle";
 import Glassmorphism from "@/components/ui/Glassmorphism";
 import AnimatedBackground from "@/components/ui/AnimatedBackground";
@@ -7,14 +8,28 @@ import PricingSimulator from "@/components/ui/PricingSimulator";
 import PricingCard from "@/components/ui/PricingCard";
 import CaseStudyCard from "@/components/ui/CaseStudyCard";
 import LongTermPackTable from "@/components/ui/LongTermPackTable";
+import ContactForm from "@/components/ui/ContactForm";
 import { Clock, Calendar, Home, Camera, MapPin, Building, Calculator } from "lucide-react";
 
 export default function YourNursePricingPage() {
+  const [pricingResult, setPricingResult] = useState<string>("");
+
   const scrollToSimulator = () => {
     const element = document.getElementById("pricing-simulator");
     if (element) {
       element.scrollIntoView({ behavior: "smooth", block: "start" });
     }
+  };
+
+  const handleInquiryRequest = (message: string) => {
+    setPricingResult(message);
+    // 問い合わせフォームまでスクロール
+    setTimeout(() => {
+      const formElement = document.getElementById("contact-form");
+      if (formElement) {
+        formElement.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }, 100);
   };
 
   return (
@@ -264,7 +279,27 @@ export default function YourNursePricingPage() {
               <Glassmorphism blur="xl" opacity={50} hoverOpacity={60} hoverEffect={true} />
               
               <div className="relative z-10">
-                <PricingSimulator />
+                <PricingSimulator onInquiryRequest={handleInquiryRequest} />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* お問い合わせフォーム */}
+      <section id="contact-form" className="py-32 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-4xl mx-auto">
+          <SectionTitle title="お問い合わせ" />
+          
+          <div className="mt-16">
+            <div className="relative px-8 py-12 rounded-2xl overflow-hidden">
+              <Glassmorphism blur="xl" opacity={50} hoverOpacity={60} hoverEffect={true} />
+              
+              <div className="relative z-10">
+                <p className="text-base md:text-lg text-slate-600 mb-8 text-center leading-relaxed font-light">
+                  ご質問やご相談がございましたら、お気軽にお問い合わせください。
+                </p>
+                <ContactForm showPhone={true} initialPricingResult={pricingResult} />
               </div>
             </div>
           </div>

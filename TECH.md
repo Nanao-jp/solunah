@@ -264,6 +264,231 @@ const result = useMemo(() => {
 }, [startDate, startTime, endDate, endTime]);
 ```
 
+### 複数日対応の実装
+
+複数日に跨る利用に対応するため、各日の時間を個別に管理する仕組みを実装しています。
+
+#### データ構造
+
+```tsx
+interface DayTimeSlot {
+  date: string; // YYYY-MM-DD形式
+  startTime: string; // HH:mm形式
+  endTime: string; // HH:mm形式
+}
+```
+
+#### 日付範囲から各日のスロットを生成
+
+```tsx
+function generateDayTimeSlots(startDate: Date | null, endDate: Date | null): DayTimeSlot[] {
+  if (!startDate || !endDate) return [];
+  
+  const slots: DayTimeSlot[] = [];
+  const current = new Date(startDate);
+  const end = new Date(endDate);
+  
+  // 終了日まで1日ずつ追加
+  while (current <= end) {
+    const dateStr = current.toISOString().split("T")[0];
+    slots.push({
+      date: dateStr,
+      startTime: "",
+      endTime: "",
+    });
+    current.setDate(current.getDate() + 1);
+  }
+  
+  return slots;
+}
+```
+
+#### 複数日の時間を合計する計算
+
+```tsx
+const calculateMultipleDays = (slots: DayTimeSlot[], collaborationHours: number): CalculationResult => {
+  let totalNormalHours = 0;
+  let totalNightHours = 0;
+  let totalNewYearHours = 0;
+  let totalBasePrice = 0;
+
+  // 各日の時間を計算
+  slots.forEach((slot) => {
+    if (slot.startTime && slot.endTime) {
+      const dayCalc = calculateHours(slot.date, slot.startTime, slot.date, slot.endTime, 0);
+      totalNormalHours += dayCalc.normalHours;
+      totalNightHours += dayCalc.nightHours;
+      totalNewYearHours += dayCalc.newYearHours;
+      totalBasePrice += dayCalc.basePrice;
+    }
+  });
+
+  // 全期間の合計で長時間パックの割引率を判定
+  const totalHoursInt = Math.floor(totalNormalHours + totalNightHours + totalNewYearHours);
+  // ... 割引計算
+};
+```
+
+#### UIの実装
+
+```tsx
+{dayTimeSlots.length > 0 ? (
+  // 複数日の時間入力
+  <div className="space-y-4">
+    {dayTimeSlots.map((slot, index) => {
+      const isSingleDay = dayTimeSlots.length === 1;
+      return (
+        <div key={slot.date}>
+          {!isSingleDay && (
+            <div>{(index + 1)}日目 ({dateLabel})</div>
+          )}
+          <TimeRangeInput
+            startTime={slot.startTime}
+            endTime={slot.endTime}
+            onStartTimeChange={(time) => updateDayTimeSlot(index, "startTime", time)}
+            onEndTimeChange={(time) => updateDayTimeSlot(index, "endTime", time)}
+            showLabel={isSingleDay}
+          />
+        </div>
+      );
+    })}
+  </div>
+) : (
+  // 単一日の時間入力
+  <TimeRangeInput ... />
+)}
+```
+
+**ポイント**:
+- 1日のみの場合は「1日目」ラベルを表示しない
+- 各日の時間入力は独立して管理
+- 計算ロジックは各日の時間を合計して処理
+
+### 計算結果から問い合わせフォームへの転写機能
+
+料金シミュレーターで計算した結果を、問い合わせフォームに自動転写する機能です。
+
+#### 実装パターン
+
+**1. コールバック関数による連携**
+
+```tsx
+// PricingSimulatorコンポーネント
+interface PricingSimulatorProps {
+  onInquiryRequest?: (message: string) => void;
+}
+
+export default function PricingSimulator({ onInquiryRequest }: PricingSimulatorProps) {
+  // 計算結果を整形してメッセージに変換
+  const formatInquiryMessage = () => {
+    const lines: string[] = [];
+    lines.push("【料金シミュレーター結果】");
+    lines.push("");
+    lines.push("【利用期間】");
+    // ... 利用期間、時間、料金内訳などを整形
+    return lines.join("\n");
+  };
+
+  const handleInquiryClick = () => {
+    const message = formatInquiryMessage();
+    if (onInquiryRequest) {
+      onInquiryRequest(message);
+    }
+  };
+
+  return (
+    <>
+      {/* 計算結果表示 */}
+      {result.totalHours > 0 && (
+        <button onClick={handleInquiryClick}>
+          この内容で問い合わせる
+        </button>
+      )}
+    </>
+  );
+}
+```
+
+**2. 親コンポーネントでの状態管理**
+
+```tsx
+// 料金ページ
+export default function PricingPage() {
+  const [inquiryMessage, setInquiryMessage] = useState<string>("");
+
+  const handleInquiryRequest = (message: string) => {
+    setInquiryMessage(message);
+    // 問い合わせフォームまでスクロール
+    setTimeout(() => {
+      const formElement = document.getElementById("contact-form");
+      if (formElement) {
+        formElement.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }, 100);
+  };
+
+  return (
+    <>
+      <PricingSimulator onInquiryRequest={handleInquiryRequest} />
+      <ContactForm initialMessage={inquiryMessage} />
+    </>
+  );
+}
+```
+
+**3. フォームコンポーネントでの自動反映**
+
+```tsx
+// ContactFormコンポーネント
+interface ContactFormProps {
+  initialMessage?: string;
+}
+
+export default function ContactForm({ initialMessage }: ContactFormProps) {
+  const [formData, setFormData] = useState({
+    message: "",
+    // ...
+  });
+
+  // initialMessageが変更されたらメッセージ欄に反映
+  useEffect(() => {
+    if (initialMessage) {
+      setFormData((prev) => ({
+        ...prev,
+        message: initialMessage,
+      }));
+    }
+  }, [initialMessage]);
+
+  return (
+    <form>
+      <textarea
+        value={formData.message}
+        onChange={handleChange}
+      />
+    </form>
+  );
+}
+```
+
+#### 転写される情報
+
+計算結果から以下の情報が整形されて転写されます：
+
+- **利用期間**: 開始日時～終了日時（複数日の場合は各日ごと）
+- **利用時間**: 合計時間、通常時間、夜間時間、年末年始時間
+- **料金内訳**: 基本料金、各時間帯の料金
+- **割引情報**: 写真提供割引、長時間パック割引
+- **カメラマンオプション**: プラン、延長回数、コラボタイプ、使用日（複数日の場合）
+- **定期契約**: 適用有無
+- **合計金額**: 最終的な料金
+
+#### メリット
+
+- **ユーザビリティ向上**: 計算結果を手動で入力する必要がない
+- **入力ミス防止**: 自動転写により正確な情報を送信できる
+- **スムーズな導線**: 計算→問い合わせの流れが自然
+
 ---
 
 ## 🕐 モバイル最適化日時入力UI

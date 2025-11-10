@@ -25,23 +25,13 @@ const LONG_TERM_PACK_DATA: LongTermPackRow[] = [
 ];
 
 export default function LongTermPackTable() {
-  const [mobileTab, setMobileTab] = useState<"original" | "pack">("original");
+  const [mobileTab, setMobileTab] = useState<"original" | "pack">("pack");
 
   return (
     <div className="relative">
       {/* モバイル用タブ */}
       <div className="md:hidden mb-6">
-        <div className="flex gap-2 border-b border-slate-200">
-          <button
-            onClick={() => setMobileTab("original")}
-            className={`flex-1 py-3 text-sm font-light transition-colors ${
-              mobileTab === "original"
-                ? "text-orange-500 border-b-2 border-orange-500"
-                : "text-slate-600 hover:text-slate-900"
-            }`}
-          >
-            本来の料金
-          </button>
+        <div className="flex flex-row-reverse gap-2 border-b border-slate-200">
           <button
             onClick={() => setMobileTab("pack")}
             className={`flex-1 py-3 text-sm font-light transition-colors ${
@@ -51,6 +41,16 @@ export default function LongTermPackTable() {
             }`}
           >
             長時間パック
+          </button>
+          <button
+            onClick={() => setMobileTab("original")}
+            className={`flex-1 py-3 text-sm font-light transition-colors ${
+              mobileTab === "original"
+                ? "text-orange-500 border-b-2 border-orange-500"
+                : "text-slate-600 hover:text-slate-900"
+            }`}
+          >
+            本来の料金
           </button>
         </div>
       </div>

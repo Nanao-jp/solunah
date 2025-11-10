@@ -1,11 +1,18 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import { Calculator, Clock, Camera, Percent } from "lucide-react";
-import DateTimeInput from "./DateTimeInput";
+import { useState, useMemo, useEffect } from "react";
+import { Calculator, Clock, Camera, Percent, Calendar, Mail } from "lucide-react";
+import DateInput from "./DateInput";
+import TimeRangeInput from "./TimeRangeInput";
 import RegularContractModal from "./RegularContractModal";
 import CollaborationModal from "./CollaborationModal";
 import "react-datepicker/dist/react-datepicker.css";
+
+interface DayTimeSlot {
+  date: string; // YYYY-MM-DD形式
+  startTime: string; // HH:mm形式
+  endTime: string; // HH:mm形式
+}
 
 interface CalculationResult {
   totalHours: number;
@@ -297,22 +304,203 @@ function calculateHours(
   };
 }
 
-export default function PricingSimulator() {
+// 日付範囲から各日の時間スロットを生成する関数
+function generateDayTimeSlots(startDate: Date | null, endDate: Date | null): DayTimeSlot[] {
+  if (!startDate || !endDate) return [];
+  
+  const slots: DayTimeSlot[] = [];
+  const current = new Date(startDate);
+  const end = new Date(endDate);
+  
+  // 終了日まで1日ずつ追加
+  while (current <= end) {
+    const dateStr = current.toISOString().split("T")[0];
+    slots.push({
+      date: dateStr,
+      startTime: "",
+      endTime: "",
+    });
+    current.setDate(current.getDate() + 1);
+  }
+  
+  return slots;
+}
+
+interface PricingSimulatorProps {
+  onInquiryRequest?: (message: string) => void;
+}
+
+export default function PricingSimulator({ onInquiryRequest }: PricingSimulatorProps = {}) {
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [startTime, setStartTime] = useState("");
   const [endDate, setEndDate] = useState<Date | null>(null);
   const [endTime, setEndTime] = useState("");
+  const [dayTimeSlots, setDayTimeSlots] = useState<DayTimeSlot[]>([]);
+
+  // 日付範囲が変更されたら、各日の時間スロットを生成
+  useEffect(() => {
+    if (startDate && endDate) {
+      const slots = generateDayTimeSlots(startDate, endDate);
+      setDayTimeSlots(slots);
+    } else {
+      setDayTimeSlots([]);
+    }
+  }, [startDate, endDate]);
+
+  const handleStartDateChange = (date: Date | null) => {
+    setStartDate(date);
+    // 開始日が設定されたら、終了日も同じ日付に設定
+    if (date) {
+      setEndDate(date);
+    }
+  };
+
+  // 各日の時間を更新する関数
+  const updateDayTimeSlot = (index: number, field: "startTime" | "endTime", value: string) => {
+    setDayTimeSlots((prev) => {
+      const updated = [...prev];
+      updated[index] = { ...updated[index], [field]: value };
+      return updated;
+    });
+  };
   const [isRegularContract, setIsRegularContract] = useState(false);
   const [photographerPlan, setPhotographerPlan] = useState<keyof typeof PHOTOGRAPHER_PLANS>("none");
   const [collaborationType, setCollaborationType] = useState<CollaborationType>("no-collab");
   const [extensionCount, setExtensionCount] = useState<number>(0);
+  const [photographerDays, setPhotographerDays] = useState<number[]>([]); // カメラマンを使う日のインデックス
   const [isRegularModalOpen, setIsRegularModalOpen] = useState(false);
   const [isCollaborationModalOpen, setIsCollaborationModalOpen] = useState(false);
 
-  const result = useMemo(() => {
-    const startDateStr = startDate ? startDate.toISOString().split("T")[0] : "";
-    const endDateStr = endDate ? endDate.toISOString().split("T")[0] : "";
+  // 日付範囲が変更されたら、カメラマンの日選択もリセット
+  useEffect(() => {
+    setPhotographerDays([]);
+  }, [startDate, endDate]);
+
+  // 複数日の時間を合計する関数
+  const calculateMultipleDays = (slots: DayTimeSlot[], collaborationHours: number): CalculationResult => {
+    let totalNormalHours = 0;
+    let totalNightHours = 0;
+    let totalNewYearHours = 0;
+    let totalBasePrice = 0;
+    let totalCollabNormalHours = 0;
+    let totalCollabNightHours = 0;
+    let totalCollabNewYearHours = 0;
+    let totalNonCollabNormalHours = 0;
+    let totalNonCollabNightHours = 0;
+    let totalNonCollabNewYearHours = 0;
+
+    // 各日の時間を計算
+    slots.forEach((slot) => {
+      if (slot.startTime && slot.endTime) {
+        const dayCalc = calculateHours(slot.date, slot.startTime, slot.date, slot.endTime, 0);
+        totalNormalHours += dayCalc.normalHours;
+        totalNightHours += dayCalc.nightHours;
+        totalNewYearHours += dayCalc.newYearHours;
+        totalBasePrice += dayCalc.basePrice;
+      }
+    });
+
+    // コラボ時間の割り当て（全期間で合計）
+    let remainingCollabHours = collaborationHours;
     
+    // 通常時間からコラボ時間を割り当て
+    if (remainingCollabHours > 0 && totalNormalHours > 0) {
+      totalCollabNormalHours = Math.min(remainingCollabHours, totalNormalHours);
+      remainingCollabHours -= totalCollabNormalHours;
+    }
+    // 夜間時間からコラボ時間を割り当て
+    if (remainingCollabHours > 0 && totalNightHours > 0) {
+      totalCollabNightHours = Math.min(remainingCollabHours, totalNightHours);
+      remainingCollabHours -= totalCollabNightHours;
+    }
+    // 年末年始時間からコラボ時間を割り当て
+    if (remainingCollabHours > 0 && totalNewYearHours > 0) {
+      totalCollabNewYearHours = Math.min(remainingCollabHours, totalNewYearHours);
+      remainingCollabHours -= totalCollabNewYearHours;
+    }
+
+    // コラボ以外の時間
+    totalNonCollabNormalHours = totalNormalHours - totalCollabNormalHours;
+    totalNonCollabNightHours = totalNightHours - totalCollabNightHours;
+    totalNonCollabNewYearHours = totalNewYearHours - totalCollabNewYearHours;
+
+    // コラボ時間分の料金
+    const collabNormalPrice = Math.floor(totalCollabNormalHours * NORMAL_RATE);
+    const collabNightPrice = Math.floor(totalCollabNightHours * NIGHT_RATE);
+    const collabNewYearPrice = Math.floor(totalCollabNewYearHours * NEW_YEAR_RATE);
+    const collabTotalPrice = collabNormalPrice + collabNightPrice + collabNewYearPrice;
+    const collabTotalHours = totalCollabNormalHours + totalCollabNightHours + totalCollabNewYearHours;
+
+    // コラボ以外の時間分の料金
+    const nonCollabNormalPrice = Math.floor(totalNonCollabNormalHours * NORMAL_RATE);
+    const nonCollabNightPrice = Math.floor(totalNonCollabNightHours * NIGHT_RATE);
+    const nonCollabNewYearPrice = Math.floor(totalNonCollabNewYearHours * NEW_YEAR_RATE);
+    const nonCollabTotalPrice = nonCollabNormalPrice + nonCollabNightPrice + nonCollabNewYearPrice;
+    const nonCollabTotalHours = totalNonCollabNormalHours + totalNonCollabNightHours + totalNonCollabNewYearHours;
+
+    // 総合時間で長時間パックの割引率を判定
+    let longTermDiscountRate = 0;
+    const totalHoursInt = Math.floor(totalNormalHours + totalNightHours + totalNewYearHours);
+    
+    if (totalHoursInt >= 12) {
+      longTermDiscountRate = 0.15;
+    } else if (totalHoursInt >= 9) {
+      longTermDiscountRate = 0.10;
+    } else if (totalHoursInt > 3) {
+      longTermDiscountRate = 0.05;
+    }
+
+    // コラボ以外の時間分の料金に、総合時間で判定した長時間パック割引率を適用
+    let nonCollabLongTermDiscount = 0;
+    let nonCollabLongTermDiscountRate = 0;
+    
+    if (longTermDiscountRate > 0 && nonCollabTotalPrice > 0) {
+      nonCollabLongTermDiscountRate = longTermDiscountRate;
+      nonCollabLongTermDiscount = Math.floor(nonCollabTotalPrice * longTermDiscountRate);
+    }
+
+    // 旧ロジック（後方互換性のため残す）
+    let longTermDiscount = 0;
+    if (longTermDiscountRate > 0) {
+      longTermDiscount = Math.floor(totalBasePrice * longTermDiscountRate);
+    }
+
+    return {
+      totalHours: Math.floor((totalNormalHours + totalNightHours + totalNewYearHours) * 100) / 100,
+      normalHours: Math.floor(totalNormalHours * 100) / 100,
+      nightHours: Math.floor(totalNightHours * 100) / 100,
+      newYearHours: Math.floor(totalNewYearHours * 100) / 100,
+      basePrice: totalBasePrice,
+      longTermDiscount,
+      longTermDiscountRate,
+      photographerPrice: 0,
+      totalPrice: Math.floor(totalBasePrice - longTermDiscount),
+      breakdown: {
+        normal: { hours: Math.floor(totalNormalHours * 100) / 100, price: Math.floor(totalNormalHours * NORMAL_RATE) },
+        night: { hours: Math.floor(totalNightHours * 100) / 100, price: Math.floor(totalNightHours * NIGHT_RATE) },
+        newYear: { hours: Math.floor(totalNewYearHours * 100) / 100, price: Math.floor(totalNewYearHours * NEW_YEAR_RATE) },
+      },
+      collaborationHours: {
+        normal: Math.floor(totalCollabNormalHours * 100) / 100,
+        night: Math.floor(totalCollabNightHours * 100) / 100,
+        newYear: Math.floor(totalCollabNewYearHours * 100) / 100,
+        total: Math.floor(collabTotalHours * 100) / 100,
+        price: collabTotalPrice,
+      },
+      nonCollaborationHours: {
+        normal: Math.floor(totalNonCollabNormalHours * 100) / 100,
+        night: Math.floor(totalNonCollabNightHours * 100) / 100,
+        newYear: Math.floor(totalNonCollabNewYearHours * 100) / 100,
+        total: Math.floor(nonCollabTotalHours * 100) / 100,
+        price: nonCollabTotalPrice,
+      },
+      collaborationDiscount: 0, // 後で計算
+      nonCollaborationLongTermDiscount: nonCollabLongTermDiscount,
+      nonCollaborationLongTermDiscountRate: nonCollabLongTermDiscountRate,
+    };
+  };
+
+  const result = useMemo(() => {
     // カメラマンオプションの料金計算
     const plan = PHOTOGRAPHER_PLANS[photographerPlan];
     const planPrice = plan.price;
@@ -324,7 +512,16 @@ export default function PricingSimulator() {
       ? planDuration 
       : 0;
     
-    const calc = calculateHours(startDateStr, startTime, endDateStr, endTime, collaborationHours);
+    // 複数日の時間スロットがある場合は複数日計算、ない場合は従来の計算
+    let calc: CalculationResult;
+    if (dayTimeSlots.length > 0 && dayTimeSlots.some(slot => slot.startTime && slot.endTime)) {
+      calc = calculateMultipleDays(dayTimeSlots, collaborationHours);
+    } else {
+      // 従来の単一日計算（後方互換性のため）
+      const startDateStr = startDate ? startDate.toISOString().split("T")[0] : "";
+      const endDateStr = endDate ? endDate.toISOString().split("T")[0] : "";
+      calc = calculateHours(startDateStr, startTime, endDateStr, endTime, collaborationHours);
+    }
     
     // コラボ割引の計算（写真提供コラボが選択されている場合のみ）
     let collaborationDiscount = 0;
@@ -343,7 +540,11 @@ export default function PricingSimulator() {
     }
     
     // カメラマンオプション料金は固定（割引なし）
-    const photographerPrice = planPrice + extensionPrice;
+    // 複数日選択されている場合は、選択された日数分を掛け算
+    const photographerDaysCount = dayTimeSlots.length > 1 && photographerDays.length > 0 
+      ? photographerDays.length 
+      : 1;
+    const photographerPrice = (planPrice + extensionPrice) * photographerDaysCount;
     
     // コラボ時間分には写真提供割引、コラボ以外の時間分には長時間パック割引を適用
     const totalDiscount = collaborationDiscount + calc.nonCollaborationLongTermDiscount;
@@ -361,26 +562,195 @@ export default function PricingSimulator() {
       totalDiscount,
       totalPrice,
     };
-  }, [startDate, startTime, endDate, endTime, photographerPlan, extensionCount, collaborationType]);
+  }, [startDate, startTime, endDate, endTime, dayTimeSlots, photographerPlan, extensionCount, collaborationType, photographerDays]);
+
+  // 計算結果を問い合わせメッセージに変換する関数
+  const formatInquiryMessage = () => {
+    if (result.totalHours === 0) return "";
+
+    const lines: string[] = [];
+
+    // 利用期間
+    if (dayTimeSlots.length > 0) {
+      lines.push("【利用期間】");
+      dayTimeSlots.forEach((slot, index) => {
+        if (slot.startTime && slot.endTime) {
+          const date = new Date(slot.date);
+          const dateLabel = date.toLocaleDateString("ja-JP", { 
+            year: "numeric",
+            month: "long", 
+            day: "numeric",
+            weekday: "short"
+          });
+          const dayNumber = dayTimeSlots.length > 1 ? `${index + 1}日目: ` : "";
+          lines.push(`${dayNumber}${dateLabel} ${slot.startTime} ～ ${slot.endTime}`);
+        }
+      });
+    } else if (startDate && endDate && startTime && endTime) {
+      lines.push("【利用期間】");
+      const startDateLabel = startDate.toLocaleDateString("ja-JP", { 
+        year: "numeric",
+        month: "long", 
+        day: "numeric",
+        weekday: "short"
+      });
+      const endDateLabel = endDate.toLocaleDateString("ja-JP", { 
+        year: "numeric",
+        month: "long", 
+        day: "numeric",
+        weekday: "short"
+      });
+      if (startDate.toDateString() === endDate.toDateString()) {
+        lines.push(`${startDateLabel} ${startTime} ～ ${endTime}`);
+      } else {
+        lines.push(`${startDateLabel} ${startTime} ～ ${endDateLabel} ${endTime}`);
+      }
+    }
+    lines.push("");
+
+    // 利用時間
+    lines.push("【利用時間】");
+    lines.push(`合計: ${result.totalHours.toFixed(2)}時間`);
+    if (result.normalHours > 0) {
+      lines.push(`・通常時間（5時～22時）: ${result.normalHours.toFixed(2)}時間`);
+    }
+    if (result.nightHours > 0) {
+      lines.push(`・夜間時間（22時～翌5時）: ${result.nightHours.toFixed(2)}時間`);
+    }
+    if (result.newYearHours > 0) {
+      lines.push(`・年末年始（12/30～1/3）: ${result.newYearHours.toFixed(2)}時間`);
+    }
+    lines.push("");
+
+    // 料金内訳
+    lines.push("【料金内訳】");
+    lines.push(`基本料金: ¥${result.basePrice.toLocaleString()}`);
+    
+    if (result.breakdown.normal.hours > 0) {
+      lines.push(`  通常時間: ¥${result.breakdown.normal.price.toLocaleString()}`);
+    }
+    if (result.breakdown.night.hours > 0) {
+      lines.push(`  夜間時間: ¥${result.breakdown.night.price.toLocaleString()}`);
+    }
+    if (result.breakdown.newYear.hours > 0) {
+      lines.push(`  年末年始: ¥${result.breakdown.newYear.price.toLocaleString()}`);
+    }
+
+    // 割引
+    if (result.collaborationDiscount > 0) {
+      lines.push(`写真提供割引: -¥${result.collaborationDiscount.toLocaleString()}`);
+    }
+    if (result.nonCollaborationLongTermDiscount > 0) {
+      lines.push(`長時間パック割引（-${Math.round(result.nonCollaborationLongTermDiscountRate * 100)}%）: -¥${result.nonCollaborationLongTermDiscount.toLocaleString()}`);
+    }
+
+    // カメラマンオプション
+    if (result.photographerPrice > 0) {
+      lines.push(`カメラマンオプション: ¥${result.photographerPrice.toLocaleString()}`);
+      const plan = PHOTOGRAPHER_PLANS[photographerPlan];
+      if (plan.price > 0) {
+        lines.push(`  ${plan.name}: ¥${plan.price.toLocaleString()}`);
+      }
+      if (extensionCount > 0) {
+        lines.push(`  延長30分 × ${extensionCount}回: ¥${(extensionCount * EXTENSION_PRICE).toLocaleString()}`);
+      }
+      if (collaborationType !== "no-collab") {
+        const collabTypeLabel = collaborationType === "with-face" ? "顔出し有りコラボ" : "顔出し無しコラボ";
+        lines.push(`  コラボタイプ: ${collabTypeLabel}`);
+      }
+      if (dayTimeSlots.length > 1 && photographerDays.length > 0) {
+        const selectedDays = photographerDays.map(d => `${d + 1}日目`).join("、");
+        lines.push(`  使用日: ${selectedDays}`);
+      }
+    }
+
+    // 定期契約
+    if (isRegularContract) {
+      lines.push("定期契約: 適用（詳細は別途ご相談）");
+    }
+
+    lines.push("");
+    lines.push(`【合計金額】`);
+    lines.push(`¥${result.totalPrice.toLocaleString()}`);
+
+    return lines.join("\n");
+  };
+
+  const handleInquiryClick = () => {
+    const message = formatInquiryMessage();
+    if (onInquiryRequest) {
+      onInquiryRequest(message);
+    }
+  };
 
   return (
     <div className="space-y-6">
+      {/* 日付入力 */}
       <div className="grid md:grid-cols-2 gap-6">
-        <DateTimeInput
-          label="利用開始日時"
+        <DateInput
+          label="利用開始日"
           date={startDate}
-          time={startTime}
-          onDateChange={setStartDate}
-          onTimeChange={setStartTime}
+          onDateChange={handleStartDateChange}
         />
-        <DateTimeInput
-          label="利用終了日時"
+        <DateInput
+          label="利用終了日"
           date={endDate}
-          time={endTime}
           onDateChange={setEndDate}
-          onTimeChange={setEndTime}
         />
       </div>
+
+      {/* 時間入力 */}
+      {dayTimeSlots.length > 0 ? (
+        // 複数日の時間入力
+        <div className="space-y-4">
+          {dayTimeSlots.length > 1 && (
+            <label className="block text-sm font-medium text-slate-700">
+              <Clock className="w-4 h-4 inline mr-2 text-orange-500" />
+              各日の利用時間
+            </label>
+          )}
+          <div className="space-y-4">
+            {dayTimeSlots.map((slot, index) => {
+              const date = new Date(slot.date);
+              const dateLabel = date.toLocaleDateString("ja-JP", { 
+                month: "long", 
+                day: "numeric",
+                weekday: "short"
+              });
+              const dayNumber = index + 1;
+              const isSingleDay = dayTimeSlots.length === 1;
+              
+              return (
+                <div key={slot.date} className={isSingleDay ? "" : "p-4 border border-slate-200 rounded-lg bg-slate-50/50"}>
+                  {!isSingleDay && (
+                    <div className="flex items-center gap-2 mb-3">
+                      <Calendar className="w-4 h-4 text-orange-500" />
+                      <span className="text-sm font-medium text-slate-700">
+                        {dayNumber}日目 ({dateLabel})
+                      </span>
+                    </div>
+                  )}
+                  <TimeRangeInput
+                    startTime={slot.startTime}
+                    endTime={slot.endTime}
+                    onStartTimeChange={(time) => updateDayTimeSlot(index, "startTime", time)}
+                    onEndTimeChange={(time) => updateDayTimeSlot(index, "endTime", time)}
+                    showLabel={isSingleDay}
+                  />
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      ) : (
+        // 単一日の時間入力（従来の方式）
+        <TimeRangeInput
+          startTime={startTime}
+          endTime={endTime}
+          onStartTimeChange={setStartTime}
+          onEndTimeChange={setEndTime}
+        />
+      )}
 
       {/* オプション */}
       <div className="space-y-4">
@@ -418,6 +788,7 @@ export default function PricingSimulator() {
               if (newPlan === "none") {
                 setExtensionCount(0);
                 setCollaborationType("no-collab");
+                setPhotographerDays([]);
               }
             }}
             className="w-full px-4 py-3 rounded-lg border border-slate-300 bg-white/80 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
@@ -429,6 +800,47 @@ export default function PricingSimulator() {
             ))}
           </select>
         </div>
+
+        {/* 複数日の場合、カメラマンを使う日を選択 */}
+        {photographerPlan !== "none" && dayTimeSlots.length > 1 && (
+          <div className="pl-2 border-l-2 border-orange-200">
+            <label className="block text-sm font-medium text-slate-700 mb-3">
+              カメラマンを使用する日
+            </label>
+            <div className="space-y-2">
+              {dayTimeSlots.map((slot, index) => {
+                const date = new Date(slot.date);
+                const dateLabel = date.toLocaleDateString("ja-JP", { 
+                  month: "long", 
+                  day: "numeric",
+                  weekday: "short"
+                });
+                const dayNumber = index + 1;
+                const isChecked = photographerDays.includes(index);
+                
+                return (
+                  <label key={slot.date} className="flex items-center gap-3 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={isChecked}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setPhotographerDays([...photographerDays, index]);
+                        } else {
+                          setPhotographerDays(photographerDays.filter(d => d !== index));
+                        }
+                      }}
+                      className="w-5 h-5 rounded border-slate-300 text-orange-500 focus:ring-orange-500"
+                    />
+                    <span className="text-slate-700 font-light">
+                      {dayNumber}日目 ({dateLabel})
+                    </span>
+                  </label>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         {photographerPlan !== "none" && (
           <div className="space-y-3">
@@ -615,6 +1027,20 @@ export default function PricingSimulator() {
               </div>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* この内容で問い合わせるボタン */}
+      {result.totalHours > 0 && onInquiryRequest && (
+        <div className="mt-6 pt-6 border-t border-slate-200">
+          <button
+            type="button"
+            onClick={handleInquiryClick}
+            className="w-full px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white rounded-lg transition-all duration-200 hover:scale-105 flex items-center justify-center gap-2 font-medium"
+          >
+            <Mail className="w-5 h-5" />
+            この内容で問い合わせる
+          </button>
         </div>
       )}
 

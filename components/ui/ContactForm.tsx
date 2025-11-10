@@ -1,11 +1,13 @@
 "use client";
 
-import { useState } from "react";
-import { Send } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Send, Calculator } from "lucide-react";
 
 interface ContactFormProps {
   showPhone?: boolean;
   onSubmit?: (data: ContactFormData) => void;
+  initialMessage?: string;
+  initialPricingResult?: string;
 }
 
 export interface ContactFormData {
@@ -13,15 +15,37 @@ export interface ContactFormData {
   email: string;
   phone?: string;
   message: string;
+  pricingResult?: string;
 }
 
-export default function ContactForm({ showPhone = false, onSubmit }: ContactFormProps) {
+export default function ContactForm({ showPhone = false, onSubmit, initialMessage, initialPricingResult }: ContactFormProps) {
   const [formData, setFormData] = useState<ContactFormData>({
     name: "",
     email: "",
     phone: "",
     message: "",
+    pricingResult: "",
   });
+
+  // initialMessageが変更されたらメッセージ欄に反映
+  useEffect(() => {
+    if (initialMessage) {
+      setFormData((prev) => ({
+        ...prev,
+        message: initialMessage,
+      }));
+    }
+  }, [initialMessage]);
+
+  // initialPricingResultが変更されたら料金シミュレーター結果欄に反映
+  useEffect(() => {
+    if (initialPricingResult) {
+      setFormData((prev) => ({
+        ...prev,
+        pricingResult: initialPricingResult,
+      }));
+    }
+  }, [initialPricingResult]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,7 +55,7 @@ export default function ContactForm({ showPhone = false, onSubmit }: ContactForm
       // デフォルトの送信処理
       console.log("Form submitted:", formData);
       alert("お問い合わせありがとうございます。後日ご連絡いたします。");
-      setFormData({ name: "", email: "", phone: "", message: "" });
+      setFormData({ name: "", email: "", phone: "", message: "", pricingResult: "" });
     }
   };
 
@@ -92,6 +116,25 @@ export default function ContactForm({ showPhone = false, onSubmit }: ContactForm
           />
         </div>
       )}
+
+      <div>
+        <label htmlFor="pricingResult" className="block text-sm font-medium text-slate-700 mb-2">
+          <Calculator className="w-4 h-4 inline mr-2 text-orange-500" />
+          料金シミュレーター結果
+        </label>
+        <textarea
+          id="pricingResult"
+          name="pricingResult"
+          rows={8}
+          value={formData.pricingResult || ""}
+          onChange={handleChange}
+          className="w-full px-4 py-3 rounded-lg border border-slate-300 bg-white/80 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all resize-none font-mono text-sm"
+          placeholder="料金シミュレーターで「この内容で問い合わせる」をクリックすると自動入力されます"
+        />
+        <p className="mt-1 text-xs text-slate-500 font-light">
+          料金シミュレーターで計算した結果が自動入力されます
+        </p>
+      </div>
 
       <div>
         <label htmlFor="message" className="block text-sm font-medium text-slate-700 mb-2">
