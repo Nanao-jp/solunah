@@ -250,7 +250,7 @@ function calculateHours(
     longTermDiscountRate = 0.15;
   } else if (totalHoursInt >= 9) {
     longTermDiscountRate = 0.10;
-  } else if (totalHoursInt > 3) {
+  } else if (totalHoursInt >= 3) {
     longTermDiscountRate = 0.05;
   }
   
