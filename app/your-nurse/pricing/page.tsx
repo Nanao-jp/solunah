@@ -7,9 +7,15 @@ import PricingSimulator from "@/components/ui/PricingSimulator";
 import PricingCard from "@/components/ui/PricingCard";
 import CaseStudyCard from "@/components/ui/CaseStudyCard";
 import LongTermPackTable from "@/components/ui/LongTermPackTable";
-import { Clock, Calendar, Home, Camera, MapPin } from "lucide-react";
+import { Clock, Calendar, Home, Camera, MapPin, Building, Calculator } from "lucide-react";
 
 export default function YourNursePricingPage() {
+  const scrollToSimulator = () => {
+    const element = document.getElementById("pricing-simulator");
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
 
   return (
     <>
@@ -62,23 +68,6 @@ export default function YourNursePricingPage() {
               price="¥11,880"
               unit="/時間"
             />
-          </div>
-        </div>
-      </section>
-
-      {/* 料金シミュレーター */}
-      <section className="py-32 px-4 sm:px-6 lg:px-8 bg-slate-50/50 overflow-visible">
-        <div className="max-w-6xl mx-auto">
-          <SectionTitle title="料金シミュレーター" />
-          
-          <div className="mt-16">
-            <div className="relative px-8 py-12 rounded-2xl overflow-visible">
-              <Glassmorphism blur="xl" opacity={50} hoverOpacity={60} hoverEffect={true} />
-              
-              <div className="relative z-10">
-                <PricingSimulator />
-              </div>
-            </div>
           </div>
         </div>
       </section>
@@ -194,13 +183,26 @@ export default function YourNursePricingPage() {
           
           <div className="space-y-8 mt-16">
             <CaseStudyCard
+              icon={Building}
+              title="病院や施設・自宅からの外出"
+              timeInfo="10:00～13:00　total:3時間(長時間パック適応)"
+              price="¥25,080"
+              breakdown={[]}
+              timeIcon="clock"
+            />
+
+            <CaseStudyCard
               icon={Camera}
               title="孫の七五三参り"
-              timeInfo="11:00～13:00　total: 2時間"
-              price="¥35,600"
+              timeInfo="11:00～14:00　total:3時間"
+              price="¥40,440"
               breakdown={[
-                "内訳：¥8,800×2 = ¥17,600",
-                "カメラマンコラボ(スタンダード)　¥18,000",
+                "内訳：カメラマンコラボの時間(顔出し提供25％off)",
+                "¥8,800×1.5時間×0.75⁼¥9,900",
+                "残りの時間",
+                "¥8,800×1.5時間×0.95⁼¥12,540",
+                "カメラマンコラボ(スタンダード:90分)　¥18,000",
+                "データオンラインドライブ　¥0",
               ]}
               timeIcon="clock"
             />
@@ -208,17 +210,15 @@ export default function YourNursePricingPage() {
             <CaseStudyCard
               icon={MapPin}
               title="ディズニー旅行"
-              timeInfo="2泊3日夜間別室　total：35.75時間"
-              price="¥251,680"
+              timeInfo="1泊2日夜間別室　total：22時間"
+              price="¥168,960+旅費等"
               breakdown={[
-                "内訳：¥8,800×35.75時間 = ¥314,600",
-                "長時間ご利用いただいたため、20％お値引き",
-                "¥314,600×0.8 = ¥251,680",
+                "内訳：長時間パック",
+                "¥89,760(12時間)+¥79,200(10時間)⁼¥168,960",
               ]}
               details={[
-                "1日目　新大阪の新幹線から同席(10:45～21:00/10.25時間)",
-                "2日目　ディズニー旅行(6:30～21:00/14.5時間)",
-                "3日目　新大阪駅まで(7:00～18:00/11時間)",
+                "1日目　新大阪の新幹線から同席(9:00～21:00/12時間)",
+                "2日目　新大阪駅まで(8:00～18:00/10時間)",
               ]}
               timeIcon="calendar"
             />
@@ -227,9 +227,10 @@ export default function YourNursePricingPage() {
               icon={Home}
               title="在宅"
               timeInfo="毎週月・水・木曜日　13:00～16:00/3時間"
-              price="¥316,800"
+              price="¥269,280"
               breakdown={[
-                "¥8,800×3時間×3回/週×4週/月 = ¥316,800",
+                "内訳：3時間長時間パック×12回/月⁼¥300,960",
+                "さらに！　定期利用割引適応",
               ]}
               timeIcon="calendar"
             />
@@ -247,6 +248,23 @@ export default function YourNursePricingPage() {
                     各種イベントでの救護対応も承っております。詳細はお問い合わせください。
                   </p>
                 </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 料金シミュレーター */}
+      <section id="pricing-simulator" className="py-32 px-4 sm:px-6 lg:px-8 bg-slate-50/50 overflow-visible">
+        <div className="max-w-6xl mx-auto">
+          <SectionTitle title="料金シミュレーター" />
+          
+          <div className="mt-16">
+            <div className="relative px-8 py-12 rounded-2xl overflow-visible">
+              <Glassmorphism blur="xl" opacity={50} hoverOpacity={60} hoverEffect={true} />
+              
+              <div className="relative z-10">
+                <PricingSimulator />
               </div>
             </div>
           </div>
@@ -276,6 +294,16 @@ export default function YourNursePricingPage() {
           </div>
         </div>
       </section>
+
+      {/* 料金シミュレーターへのスクロールボタン */}
+      <button
+        onClick={scrollToSimulator}
+        className="fixed bottom-6 right-6 z-50 bg-orange-500 hover:bg-orange-600 text-white rounded-full px-3 py-2 md:px-5 md:py-3 shadow-lg hover:shadow-xl transition-all duration-300 flex items-center gap-1.5 md:gap-2 group"
+        aria-label="料金シミュレーターへスクロール"
+      >
+        <Calculator className="w-4 h-4 md:w-5 md:h-5 group-hover:scale-110 transition-transform flex-shrink-0" />
+        <span className="text-xs md:text-sm font-medium whitespace-nowrap">料金シミュレーター</span>
+      </button>
     </>
   );
 }
