@@ -726,7 +726,7 @@ export default function PricingSimulator({ onInquiryRequest }: PricingSimulatorP
                     <div className="flex items-center gap-2 mb-3">
                       <Calendar className="w-4 h-4 text-orange-500" />
                       <span className="text-sm font-medium text-slate-700">
-                        {dayNumber}日目 ({dateLabel})
+                        {dateLabel}
                       </span>
                     </div>
                   )}
@@ -833,7 +833,7 @@ export default function PricingSimulator({ onInquiryRequest }: PricingSimulatorP
                       className="w-5 h-5 rounded border-slate-300 text-orange-500 focus:ring-orange-500"
                     />
                     <span className="text-slate-700 font-light">
-                      {dayNumber}日目 ({dateLabel})
+                      {dateLabel}
                     </span>
                   </label>
                 );
