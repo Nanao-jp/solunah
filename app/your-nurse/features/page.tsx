@@ -1,75 +1,114 @@
 "use client";
 
-import SectionTitle from "@/components/ui/SectionTitle";
-import { Clock, Heart, Stethoscope } from "lucide-react";
+import { useState } from "react";
+import PremiumCaseCard from "@/components/ui/PremiumCaseCard";
+import CaseModal from "@/components/ui/CaseModal";
+import YourNurseHeroSection from "@/components/ui/YourNurseHeroSection";
+import { 
+  Calendar, 
+  MapPin, 
+  Plane, 
+  Building2, 
+  Users, 
+  Stethoscope, 
+  Home, 
+  DoorOpen, 
+  Heart 
+} from "lucide-react";
 
-const features = [
+const cases = [
   {
-    icon: Clock,
-    title: "24時間サポート",
-    description: "夜間も24時間体制で、いつでも寄り添う看護サービス。緊急時にも安心です。",
+    icon: Calendar,
+    title: "冠婚葬祭",
+    message: "大切な人生の節目に、看護師が寄り添います。安心してご参加いただけるよう、健康状態を確認しながらサポートいたします。",
   },
   {
-    icon: Heart,
-    title: "温かいケア",
-    description: "明るく温かい看護で、あなたの健康を支えます。心のケアも大切にしています。",
+    icon: MapPin,
+    title: "外出",
+    message: "いつもと違う風景を見に、外に出てみませんか？看護師が付き添うことで安心して外出できるようサポートします。",
+  },
+  {
+    icon: Plane,
+    title: "旅行",
+    message: "家族旅行や思い出の場所への旅行にも看護師が同行。移動中も滞在中も、安心して過ごしていただけます。",
+  },
+  {
+    icon: Building2,
+    title: "転院付き添い",
+    message: "転院時の移動や手続きを看護師がサポート。医療機関間の連携もスムーズに行い、安心して転院していただけます。",
+  },
+  {
+    icon: Users,
+    title: "家族行事",
+    message: "お誕生日会や記念日など、家族の大切な行事に看護師が同行。健康管理をしながら、一緒に喜びを分かち合います。",
   },
   {
     icon: Stethoscope,
-    title: "柔軟なサービス",
-    description: "保険外看護サービスで、より柔軟なケアを提供。お客様のニーズに合わせます。",
+    title: "受診同行",
+    message: "病院への受診時に看護師が同行し、医師とのコミュニケーションをサポート。診察内容の理解も深まります。",
+  },
+  {
+    icon: Home,
+    title: "在宅看護(保険内と併用可能)",
+    message: "保険内の在宅看護と併用して、より柔軟で充実した看護ケアを提供。ご自宅で安心して過ごしていただけます。",
+  },
+  {
+    icon: DoorOpen,
+    title: "一時退院",
+    message: "病院からの一時退院時にも看護師がサポート。ご自宅での過ごし方や健康管理のポイントをお伝えします。",
+  },
+  {
+    icon: Heart,
+    title: "日頃の健康チェック",
+    message: "定期的な健康チェックで、日々の体調管理をサポート。小さな変化にも気づき、早期に対応いたします。",
   },
 ];
 
 export default function YourNurseFeaturesPage() {
+  const [selectedCase, setSelectedCase] = useState<number | null>(null);
+
+  const handleCardClick = (index: number) => {
+    setSelectedCase(index);
+  };
+
+  const handleCloseModal = () => {
+    setSelectedCase(null);
+  };
+
   return (
     <>
-      {/* ヒーローセクション */}
-      <section className="relative min-h-[50vh] flex items-center justify-center overflow-hidden bg-white pt-32 pb-20 px-4 sm:px-6 lg:px-8">
-        <div className="relative z-10 max-w-6xl mx-auto w-full text-center">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-light text-slate-900 mb-6 tracking-wide">
-            YOUR NURSEの特徴
-          </h1>
-          <p className="text-xl md:text-2xl text-slate-700 leading-relaxed font-light">
-            選ばれる理由があります
-          </p>
-        </div>
-      </section>
+      <YourNurseHeroSection 
+        title="事例紹介"
+        description="YOUR NURSEが提供する様々なシーンでの看護サポート事例をご紹介します。"
+      />
 
-      {/* 特徴詳細セクション */}
-      <section className="py-32 px-4 sm:px-6 lg:px-8 bg-slate-50/50">
+      {/* 事例紹介セクション */}
+      <section className="py-32 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <SectionTitle title="主な特徴" />
-          
-          <div className="grid md:grid-cols-3 gap-8 mt-16">
-            {features.map((feature, index) => {
-              const IconComponent = feature.icon;
-              
-              return (
-                <div
-                  key={index}
-                  className="relative p-8 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all"
-                  style={{
-                    animation: `fadeInUp 0.6s ease-out ${index * 0.1}s both`,
-                  }}
-                >
-                  <div className="mb-6">
-                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-500/20 to-orange-600/20 border border-orange-500/30 flex items-center justify-center">
-                      <IconComponent className="w-8 h-8 text-orange-500" />
-                    </div>
-                  </div>
-                  <h3 className="text-2xl font-light mb-4 text-slate-900 tracking-wide">
-                    {feature.title}
-                  </h3>
-                  <p className="text-slate-600 leading-relaxed font-light">
-                    {feature.description}
-                  </p>
-                </div>
-              );
-            })}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10 lg:gap-12">
+            {cases.map((caseItem, index) => (
+              <PremiumCaseCard
+                key={index}
+                icon={caseItem.icon}
+                title={caseItem.title}
+                index={index}
+                onClick={() => handleCardClick(index)}
+              />
+            ))}
           </div>
         </div>
       </section>
+
+      {/* モーダル */}
+      {selectedCase !== null && (
+        <CaseModal
+          isOpen={selectedCase !== null}
+          onClose={handleCloseModal}
+          icon={cases[selectedCase].icon}
+          title={cases[selectedCase].title}
+          message={cases[selectedCase].message}
+        />
+      )}
     </>
   );
 }

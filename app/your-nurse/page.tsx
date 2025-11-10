@@ -57,10 +57,10 @@ export default function YourNursePage() {
               className="group relative p-8 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all hover:-translate-y-1"
             >
               <h3 className="text-2xl font-light mb-4 text-slate-900 group-hover:text-orange-600 transition-colors">
-                サービス
+                私たちの想い
               </h3>
               <p className="text-slate-600 font-light mb-4">
-                訪問看護、健康相談、在宅ケアなど、充実したサービスをご用意しています。
+                「スペシャルタイムをよりスペシャルに」をコンセプトに、看護が必要な利用者様とフリーランスの看護師とを繋げる保険外看護サービスです。
               </p>
               <div className="flex items-center text-orange-500 font-medium">
                 詳しく見る
@@ -73,7 +73,7 @@ export default function YourNursePage() {
               className="group relative p-8 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all hover:-translate-y-1"
             >
               <h3 className="text-2xl font-light mb-4 text-slate-900 group-hover:text-orange-600 transition-colors">
-                特徴
+                事例紹介
               </h3>
               <p className="text-slate-600 font-light mb-4">
                 YOUR NURSEが選ばれる理由。24時間サポート、温かいケア、柔軟なサービス。

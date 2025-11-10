@@ -38,8 +38,8 @@ export default function YourNurseNavigation() {
 
   const navItems = [
     { name: "ホーム", href: "/your-nurse" },
-    { name: "サービス", href: "/your-nurse/services" },
-    { name: "特徴", href: "/your-nurse/features" },
+    { name: "私たちの想い", href: "/your-nurse/services" },
+    { name: "事例紹介", href: "/your-nurse/features" },
     { name: "料金", href: "/your-nurse/pricing" },
     { name: "お問い合わせ", href: "/your-nurse/contact" },
   ];
