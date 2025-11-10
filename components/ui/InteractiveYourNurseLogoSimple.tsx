@@ -14,19 +14,19 @@ interface HeartDetail {
 const heartDetails: HeartDetail[] = [
   {
     title: "24時間365日",
-    description: "いつでも、どこでも、あなたの健康をサポートします。夜間や休日も含めて、24時間365日体制で看護サービスを提供いたします。",
+    description: "保険内ではカバーしづらい長時間、夜間、休日にも臨機応変に対応可能",
   },
   {
     title: "全国対応",
-    description: "全国どこへでもお伺いします。地方や遠方でも、お客様のご要望に応じて柔軟に対応いたします。",
+    description: "全国各地で活動するフリーランス看護師と連携を取り、幅広い地域で対応可能",
   },
   {
     title: "1時間から",
-    description: "短時間からご利用いただけます。1時間単位でのサービス提供が可能で、お客様のスケジュールに合わせた柔軟なプランをご用意しています。",
+    description: "最短1時間から15分単位での柔軟なプランで対応可能。\n※長時間で各種割引適応あり",
   },
   {
     title: "看護師経験5年以上",
-    description: "経験豊富な看護師が、専門的な看護技術と知識を活かして、質の高いケアを提供いたします。5年以上の実務経験を持つ看護師が対応します。",
+    description: "経験豊富なフリーランス看護師が、質の高いケアをご提供いたします。\n★現在全国1000人以上の看護師登録あり",
   },
 ];
 
@@ -184,9 +184,13 @@ export default function InteractiveYourNurseLogoSimple() {
                 <h3 className="text-3xl md:text-4xl font-light text-slate-900 mb-6 tracking-wide">
                   {currentDetail.title}
                 </h3>
-                <p className="text-lg md:text-xl text-slate-600 leading-relaxed font-light">
-                  {currentDetail.description}
-                </p>
+                <div className="text-lg md:text-xl text-slate-600 leading-relaxed font-light">
+                  {currentDetail.description.split('\n').map((line, index) => (
+                    <p key={index} className={index > 0 ? "mt-2" : ""}>
+                      {line}
+                    </p>
+                  ))}
+                </div>
               </motion.div>
             </AnimatePresence>
           </div>

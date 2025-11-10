@@ -118,17 +118,142 @@ while (current < end) {
 }
 ```
 
+### 料金計算ルール（YOUR NURSE）
+
+#### 1. 基本料金
+
+時間帯別の料金を適用：
+
+- **通常時間**: ¥8,800/時間（5時～22時）
+- **夜間時間**: ¥11,000/時間（22時～翌5時）
+- **年末年始**: ¥11,880/時間（12/30～1/3）
+
+年末年始期間は優先的に適用されます。
+
+#### 2. 写真提供コラボ割引
+
+カメラマンオプションを選択し、コラボタイプを選択した場合に適用される割引です。
+
+**割引率**:
+- 顔出し有り: 25%割引
+- 顔出し無し: 10%割引
+
+**割引額の計算**:
+- 基本料金（8,800円）を基準に固定割引額を計算
+- スタンダードプラン（90分 = 1.5時間）:
+  - 顔出し有り: 8,800円 × 0.25 × 1.5 = **3,300円**
+  - 顔出し無し: 8,800円 × 0.10 × 1.5 = **1,320円**
+- ミニプラン（60分 = 1時間）:
+  - 顔出し有り: 8,800円 × 0.25 = **2,200円**
+  - 顔出し無し: 8,800円 × 0.10 = **880円**
+
+**特別ルール**:
+- 12時間以上で顔出し無しコラボの場合、写真提供割引は適用されません（長時間パック割引の方が大きいため）
+
+#### 3. 長時間パック割引
+
+総合時間（基本料金の利用時間）に応じて割引率が適用されます。
+
+**割引率**:
+- 3～8時間: 5%
+- 9～11時間: 10%
+- 12時間以上: 15%
+
+**適用方法**:
+- コラボ以外の時間分の料金に、総合時間で判定した割引率を適用
+- 例: 総合時間が5時間の場合、5%の割引率をコラボ以外の時間分に適用
+
+#### 4. コラボ時間分とコラボ以外の時間分への分割
+
+写真提供コラボが選択されている場合、基本料金を以下のように分割します：
+
+1. **コラボ時間の割り当て**:
+   - コラボ時間は通常時間から優先的に割り当て（夜間・年末年始は後回し）
+   - ミニプラン: 1時間
+   - スタンダードプラン: 1.5時間
+
+2. **割引の適用**:
+   - **コラボ時間分**: 写真提供割引を適用（固定金額）
+   - **コラボ以外の時間分**: 長時間パック割引を適用（総合時間で判定した割引率）
+
+#### 5. 計算の流れ
+
+```
+1. 基本料金を計算（通常・夜間・年末年始の合計）
+2. コラボ時間分とコラボ以外の時間分に分割
+3. コラボ時間分の料金を計算
+4. コラボ以外の時間分の料金を計算
+5. 総合時間で長時間パックの割引率を判定
+6. コラボ時間分に写真提供割引を適用
+7. コラボ以外の時間分に長時間パック割引を適用
+8. 12時間以上で顔出し無しコラボの場合、写真提供割引を無効化
+9. 合計金額 = 基本料金 - 写真提供割引 - 長時間パック割引 + カメラマンオプション料金
+```
+
+#### 6. 計算例
+
+**例1: 4時間利用、スタンダードプラン、顔出し有り**
+- 基本料金: 4時間 × 8,800円 = 35,200円
+- コラボ時間分: 1.5時間 × 8,800円 = 13,200円 → 写真提供割引¥3,300適用
+- コラボ以外: 2.5時間 × 8,800円 = 22,000円 → 長時間パック5%適用（¥1,100割引）
+- 合計割引: ¥3,300 + ¥1,100 = ¥4,400
+- カメラマンオプション: ¥18,000
+- **合計金額: ¥35,200 - ¥4,400 + ¥18,000 = ¥48,800**
+
+**例2: 12時間利用、スタンダードプラン、顔出し無し**
+- 基本料金: 12時間 × 8,800円 = 105,600円
+- コラボ時間分: 1.5時間 × 8,800円 = 13,200円
+- コラボ以外: 10.5時間 × 8,800円 = 92,400円
+- 総合時間12時間で長時間パック15%適用 → コラボ以外に15%適用（¥13,860割引）
+- 写真提供割引: 12時間以上で顔出し無しのため適用されない
+- カメラマンオプション: ¥18,000
+- **合計金額: ¥105,600 - ¥13,860 + ¥18,000 = ¥109,740**
+
 ### 割引ロジックの実装
 
 ```tsx
-// 条件に応じた割引適用
-let discount = 0;
+// コラボ時間分とコラボ以外の時間分に分割
+let collabNormalHours = 0;
+let remainingCollabHours = collaborationHours;
 
-if (totalHours >= discountThreshold) {
-  discount = Math.floor(basePrice * discountRate);
+if (remainingCollabHours > 0 && normalHours > 0) {
+  collabNormalHours = Math.min(remainingCollabHours, normalHours);
+  remainingCollabHours -= collabNormalHours;
 }
 
-const totalPrice = Math.floor(basePrice - discount);
+// コラボ以外の時間
+const nonCollabNormalHours = normalHours - collabNormalHours;
+
+// 総合時間で長時間パックの割引率を判定
+let longTermDiscountRate = 0;
+const totalHoursInt = Math.floor(normalHours + nightHours + newYearHours);
+
+if (totalHoursInt >= 12) {
+  longTermDiscountRate = 0.15;
+} else if (totalHoursInt >= 9) {
+  longTermDiscountRate = 0.10;
+} else if (totalHoursInt > 3) {
+  longTermDiscountRate = 0.05;
+}
+
+// コラボ以外の時間分に長時間パック割引を適用
+const nonCollabLongTermDiscount = Math.floor(
+  nonCollabTotalPrice * longTermDiscountRate
+);
+
+// 写真提供割引の計算
+let collaborationDiscount = 0;
+if (photographerPlan !== "none" && collaborationType !== "no-collab") {
+  const discountRate = getCollaborationDiscountRate(collaborationType);
+  collaborationDiscount = Math.floor(
+    BASE_RATE_FOR_COLLAB * discountRate * planDuration
+  );
+  
+  // 12時間以上で顔出し無しコラボの場合、写真提供割引を適用しない
+  if (totalHoursInt >= 12 && collaborationType === "without-face") {
+    collaborationDiscount = 0;
+  }
+}
 ```
 
 ### パフォーマンス最適化
