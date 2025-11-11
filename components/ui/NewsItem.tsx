@@ -1,5 +1,6 @@
 "use client";
 
+import { memo } from "react";
 import { Calendar, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import type { NewsItem } from "@/types/news";
@@ -11,7 +12,7 @@ interface NewsItemProps {
   href?: string;
 }
 
-export default function NewsItemComponent({ news, index, href = "/news" }: NewsItemProps) {
+function NewsItemComponent({ news, index, href = "/news" }: NewsItemProps) {
   return (
     <Link
       href={href}
@@ -43,4 +44,6 @@ export default function NewsItemComponent({ news, index, href = "/news" }: NewsI
     </Link>
   );
 }
+
+export default memo(NewsItemComponent);
 

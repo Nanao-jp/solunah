@@ -31,6 +31,7 @@ export default function YourNursePage() {
                     height={300}
                     className="object-contain mx-auto drop-shadow-2xl"
                     priority
+                    sizes="(max-width: 768px) 100vw, 600px"
                   />
                 </div>
                 

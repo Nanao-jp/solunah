@@ -84,6 +84,8 @@ export default function YourNurseAboutPage() {
                 width={600}
                 height={300}
                 className="object-contain mx-auto"
+                loading="lazy"
+                sizes="(max-width: 768px) 100vw, 600px"
               />
             </div>
           </div>

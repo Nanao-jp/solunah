@@ -1,5 +1,6 @@
 "use client";
 
+import { memo } from "react";
 import { LucideIcon } from "lucide-react";
 import SunCard from "@/components/ui/SunCard";
 import { Service } from "@/data/services";
@@ -9,7 +10,7 @@ interface ServiceCardProps {
   index: number;
 }
 
-export default function ServiceCard({ service, index }: ServiceCardProps) {
+function ServiceCard({ service, index }: ServiceCardProps) {
   const IconComponent = service.icon;
   
   return (
@@ -31,4 +32,6 @@ export default function ServiceCard({ service, index }: ServiceCardProps) {
     </SunCard>
   );
 }
+
+export default memo(ServiceCard);
 

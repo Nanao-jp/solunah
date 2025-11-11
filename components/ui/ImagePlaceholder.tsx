@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { LucideIcon } from "lucide-react";
 
 interface ImagePlaceholderProps {
@@ -5,7 +6,7 @@ interface ImagePlaceholderProps {
   className?: string;
 }
 
-export default function ImagePlaceholder({ icon: IconComponent, className = "" }: ImagePlaceholderProps) {
+function ImagePlaceholder({ icon: IconComponent, className = "" }: ImagePlaceholderProps) {
   return (
     <div className={`relative w-full rounded-2xl overflow-hidden shadow-lg bg-slate-100 ${className}`} style={{ aspectRatio: '4/3' }}>
       <div className="absolute inset-0 opacity-30" style={{
@@ -30,6 +31,8 @@ export default function ImagePlaceholder({ icon: IconComponent, className = "" }
     </div>
   );
 }
+
+export default memo(ImagePlaceholder);
 
 
 

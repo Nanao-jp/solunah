@@ -1,5 +1,6 @@
 "use client";
 
+import { memo } from "react";
 import { LucideIcon } from "lucide-react";
 import ImagePlaceholder from "@/components/ui/ImagePlaceholder";
 import { fadeInUpStyle, getDelayByIndex } from "@/utils/animations";
@@ -10,7 +11,7 @@ interface CaseCardProps {
   index: number;
 }
 
-export default function CaseCard({ icon: IconComponent, title, index }: CaseCardProps) {
+function CaseCard({ icon: IconComponent, title, index }: CaseCardProps) {
   return (
     <div
       className="relative bg-slate-50/50 p-6 md:p-8"
@@ -39,4 +40,6 @@ export default function CaseCard({ icon: IconComponent, title, index }: CaseCard
     </div>
   );
 }
+
+export default memo(CaseCard);
 

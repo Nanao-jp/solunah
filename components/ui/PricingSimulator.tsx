@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import { Calculator, Clock, Camera, Percent, Calendar, Mail } from "lucide-react";
 import DateInput from "./DateInput";
 import TimeRangeInput from "./TimeRangeInput";
@@ -326,22 +326,22 @@ export default function PricingSimulator({ onInquiryRequest }: PricingSimulatorP
     }
   }, [startDate, endDate]);
 
-  const handleStartDateChange = (date: Date | null) => {
+  const handleStartDateChange = useCallback((date: Date | null) => {
     setStartDate(date);
     // 開始日が設定されたら、終了日も同じ日付に設定
     if (date) {
       setEndDate(date);
     }
-  };
+  }, []);
 
   // 各日の時間を更新する関数
-  const updateDayTimeSlot = (index: number, field: "startTime" | "endTime", value: string) => {
+  const updateDayTimeSlot = useCallback((index: number, field: "startTime" | "endTime", value: string) => {
     setDayTimeSlots((prev) => {
       const updated = [...prev];
       updated[index] = { ...updated[index], [field]: value };
       return updated;
     });
-  };
+  }, []);
   const [isRegularContract, setIsRegularContract] = useState(false);
   const [photographerPlan, setPhotographerPlan] = useState<keyof typeof PHOTOGRAPHER_PLANS>("none");
   const [collaborationType, setCollaborationType] = useState<CollaborationType>("no-collab");
@@ -544,7 +544,7 @@ export default function PricingSimulator({ onInquiryRequest }: PricingSimulatorP
   }, [startDate, startTime, endDate, endTime, dayTimeSlots, photographerPlan, extensionCount, collaborationType, photographerDays]);
 
   // 計算結果を問い合わせメッセージに変換する関数
-  const formatInquiryMessage = () => {
+  const formatInquiryMessage = useMemo((): string => {
     if (result.totalHours === 0) return "";
 
     const lines: string[] = [];
@@ -653,14 +653,14 @@ export default function PricingSimulator({ onInquiryRequest }: PricingSimulatorP
     lines.push(`¥${result.totalPrice.toLocaleString()}`);
 
     return lines.join("\n");
-  };
+  }, [result, dayTimeSlots, startDate, endDate, startTime, endTime, photographerPlan, extensionCount, collaborationType, photographerDays, isRegularContract]);
 
-  const handleInquiryClick = () => {
-    const message = formatInquiryMessage();
+  const handleInquiryClick = useCallback(() => {
+    const message = formatInquiryMessage;
     if (onInquiryRequest) {
       onInquiryRequest(message);
     }
-  };
+  }, [formatInquiryMessage, onInquiryRequest]);
 
   return (
     <div className="space-y-6">

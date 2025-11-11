@@ -1,5 +1,6 @@
 "use client";
 
+import { memo, useCallback } from "react";
 import { LucideIcon } from "lucide-react";
 import ImagePlaceholder from "@/components/ui/ImagePlaceholder";
 import { fadeInUpStyle, getDelayByIndex } from "@/utils/animations";
@@ -11,11 +12,14 @@ interface PremiumCaseCardProps {
   onClick: () => void;
 }
 
-export default function PremiumCaseCard({ icon: IconComponent, title, index, onClick }: PremiumCaseCardProps) {
+function PremiumCaseCard({ icon: IconComponent, title, index, onClick }: PremiumCaseCardProps) {
+  const handleClick = useCallback(() => {
+    onClick();
+  }, [onClick]);
   return (
     <div
       className="relative cursor-pointer"
-      onClick={onClick}
+      onClick={handleClick}
       style={fadeInUpStyle(getDelayByIndex(index, 0.1), 0.8)}
     >
       {/* アルバムページ風の背景 */}
@@ -55,4 +59,6 @@ export default function PremiumCaseCard({ icon: IconComponent, title, index, onC
     </div>
   );
 }
+
+export default memo(PremiumCaseCard);
 
