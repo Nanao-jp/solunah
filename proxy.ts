@@ -1,12 +1,14 @@
 /**
- * Next.js Middleware
+ * Next.js Proxy
  * 管理画面へのアクセス制御（将来的に認証機能を追加予定）
+ * 
+ * Next.js 16では middleware.ts が非推奨となり、proxy.ts に変更されました
  */
 
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // 管理画面へのアクセス制御
