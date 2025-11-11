@@ -6,11 +6,18 @@ import Image from "next/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Glassmorphism from "@/components/ui/Glassmorphism";
 
+/**
+ * ハートの詳細情報の型定義
+ */
 interface HeartDetail {
   title: string;
   description: string;
 }
 
+/**
+ * ハートの詳細情報データ
+ * 4つの特徴を順番に表示
+ */
 const heartDetails: HeartDetail[] = [
   {
     title: "24時間365日",
@@ -30,8 +37,12 @@ const heartDetails: HeartDetail[] = [
   },
 ];
 
-// ハートのテキスト（画像の上に表示）
-const heartTexts = [
+/**
+ * ハートのテキスト（画像の上に表示）
+ * 画像の回転に合わせて表示されるテキスト
+ * 配列の場合は2行に分けて表示
+ */
+const heartTexts: (string | [string, string])[] = [
   "24時間365日",
   "全国",
   "1時間から",
@@ -39,26 +50,51 @@ const heartTexts = [
 ];
 
 /**
- * YOUR NURSEの特徴を表示するコンポーネント
- * ページャーで複数の特徴を切り替え
+ * YOUR NURSEの特徴を表示するインタラクティブなコンポーネント
+ * 
+ * 機能:
+ * - ロゴ画像を回転させて4つの特徴を順番に表示
+ * - ページャーで手動切り替え可能
+ * - 画像クリックで次の特徴に移動
+ * 
+ * 注意: アニメーションロジックは変更しないこと
  */
 export default function InteractiveYourNurseLogoSimple() {
-  const [currentIndex, setCurrentIndex] = useState(0);
+  // 現在表示中の特徴のインデックス（0-3）
+  const [currentIndex, setCurrentIndex] = useState<number>(0);
 
+  /**
+   * 前の特徴に移動
+   * 最初の場合は最後にループ
+   */
   const goToPrevious = () => {
     setCurrentIndex((prev) => (prev === 0 ? heartDetails.length - 1 : prev - 1));
   };
 
+  /**
+   * 次の特徴に移動
+   * 最後の場合は最初にループ
+   */
   const goToNext = () => {
     setCurrentIndex((prev) => (prev === heartDetails.length - 1 ? 0 : prev + 1));
   };
 
+  /**
+   * 指定したインデックスの特徴に直接移動
+   * @param index 移動先のインデックス（0-3）
+   */
   const goToIndex = (index: number) => {
-    setCurrentIndex(index);
+    if (index >= 0 && index < heartDetails.length) {
+      setCurrentIndex(index);
+    }
   };
 
+  // 現在表示中の特徴の詳細情報
   const currentDetail = heartDetails[currentIndex];
-  const rotation = currentIndex * 90; // 0度, 90度, 180度, 270度
+  
+  // 画像の回転角度（各特徴ごとに90度ずつ回転）
+  // 0度, 90度, 180度, 270度で4つのハートを表示
+  const rotation = currentIndex * 90;
 
   return (
     <div className="relative">
@@ -74,7 +110,15 @@ export default function InteractiveYourNurseLogoSimple() {
               className="relative w-full aspect-square overflow-hidden rounded-2xl cursor-pointer border border-white/30 shadow-xl"
               onClick={goToNext}
             >
-              {/* 画像を回転させる - 左側に配置して拡大 */}
+              {/* 
+                画像を回転させるアニメーション
+                - rotate: 現在のインデックスに応じて90度ずつ回転
+                - scale: 画像を2倍に拡大してハート部分を大きく表示
+                - x: 左に50%移動して右側のハートを中央に表示
+                - transition: スプリングアニメーションで滑らかに回転
+                
+                注意: これらの値は慎重に調整されたため、変更しないこと
+              */}
               <motion.div
                 className="absolute inset-0"
                 animate={{
@@ -84,8 +128,8 @@ export default function InteractiveYourNurseLogoSimple() {
                 }}
                 transition={{
                   type: "spring",
-                  stiffness: 100,
-                  damping: 15,
+                  stiffness: 100, // スプリングの硬さ（変更しない）
+                  damping: 15, // 減衰（変更しない）
                 }}
               >
                 <Image

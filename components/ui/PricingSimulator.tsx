@@ -19,12 +19,22 @@ import {
 import { isNewYearPeriod } from "@/constants/time";
 import "react-datepicker/dist/react-datepicker.css";
 
+/**
+ * 1日の時間スロット
+ * 複数日に跨る利用に対応するためのデータ構造
+ */
 interface DayTimeSlot {
   date: string; // YYYY-MM-DD形式
   startTime: string; // HH:mm形式
   endTime: string; // HH:mm形式
 }
 
+/**
+ * 料金計算結果
+ * 
+ * 注意: この型定義は計算ロジックと密接に関連しているため、
+ * フィールドの追加・削除・変更は慎重に行うこと
+ */
 interface CalculationResult {
   totalHours: number;
   normalHours: number;
@@ -60,7 +70,24 @@ interface CalculationResult {
   nonCollaborationLongTermDiscountRate: number;
 }
 
-
+/**
+ * 単一日の料金計算関数
+ * 
+ * 機能:
+ * - 開始日時から終了日時までの時間を計算
+ * - 通常時間（5時～22時）、夜間時間（22時～翌5時）、年末年始時間（12/30～1/3）に分類
+ * - コラボ時間とコラボ以外の時間を分けて計算
+ * - 長時間パック割引を適用
+ * 
+ * @param startDate 開始日（YYYY-MM-DD形式）
+ * @param startTime 開始時刻（HH:mm形式）
+ * @param endDate 終了日（YYYY-MM-DD形式）
+ * @param endTime 終了時刻（HH:mm形式）
+ * @param collaborationHours コラボ時間（時間単位、デフォルト: 0）
+ * @returns 計算結果
+ * 
+ * 注意: この関数の計算ロジックは変更しないこと
+ */
 function calculateHours(
   startDate: string,
   startTime: string,
@@ -170,7 +197,8 @@ function calculateHours(
     current.setTime(checkTime);
   }
 
-  // 料金計算（年末年始は優先、金額は整数で計算）
+  // 料金計算（各時間帯の料金を計算し、合計を算出）
+  // 注意: 金額は整数で計算（Math.floorを使用）
   const normalPrice = Math.floor(normalHours * NORMAL_RATE);
   const nightPrice = Math.floor(nightHours * NIGHT_RATE);
   const newYearPrice = Math.floor(newYearHours * NEW_YEAR_RATE);
@@ -180,7 +208,13 @@ function calculateHours(
   const totalHoursCalculated = Math.floor((normalHours + nightHours + newYearHours) * 100) / 100;
   
   // コラボ時間分とコラボ以外の時間分に分ける
-  // コラボ時間は通常時間から優先的に割り当て（夜間・年末年始は後回し）
+  // 
+  // コラボ時間の割り当てルール:
+  // 1. 通常時間から優先的に割り当て（最も割引率が高いため）
+  // 2. 通常時間が不足する場合は夜間時間から割り当て
+  // 3. さらに不足する場合は年末年始時間から割り当て
+  // 
+  // 注意: この割り当てロジックは変更しないこと
   let collabNormalHours = 0;
   let collabNightHours = 0;
   let collabNewYearHours = 0;
@@ -202,7 +236,7 @@ function calculateHours(
     remainingCollabHours -= collabNewYearHours;
   }
   
-  // コラボ以外の時間
+  // コラボ以外の時間を計算
   const nonCollabNormalHours = normalHours - collabNormalHours;
   const nonCollabNightHours = nightHours - collabNightHours;
   const nonCollabNewYearHours = newYearHours - collabNewYearHours;
@@ -221,19 +255,30 @@ function calculateHours(
   const nonCollabTotalPrice = nonCollabNormalPrice + nonCollabNightPrice + nonCollabNewYearPrice;
   const nonCollabTotalHours = nonCollabNormalHours + nonCollabNightHours + nonCollabNewYearHours;
   
-  // 総合時間で長時間パックの割引率を判定
+  // 長時間パック割引率の判定
+  // 
+  // 割引率のルール:
+  // - 12時間以上: 15%割引
+  // - 9時間以上: 10%割引
+  // - 3時間以上: 5%割引
+  // 
+  // 注意: 総合時間（通常+夜間+年末年始）で判定
+  // 注意: この割引率の計算ロジックは変更しないこと
   let longTermDiscountRate = 0;
   const totalHoursInt = Math.floor(normalHours + nightHours + newYearHours);
   
   if (totalHoursInt >= 12) {
-    longTermDiscountRate = 0.15;
+    longTermDiscountRate = 0.15; // 15%割引
   } else if (totalHoursInt >= 9) {
-    longTermDiscountRate = 0.10;
+    longTermDiscountRate = 0.10; // 10%割引
   } else if (totalHoursInt >= 3) {
-    longTermDiscountRate = 0.05;
+    longTermDiscountRate = 0.05; // 5%割引
   }
   
   // コラボ以外の時間分の料金に、総合時間で判定した長時間パック割引率を適用
+  // 
+  // 注意: コラボ時間には長時間パック割引を適用しない
+  // 注意: コラボ以外の時間分の料金にのみ割引を適用
   let nonCollabLongTermDiscount = 0;
   let nonCollabLongTermDiscountRate = 0;
   
@@ -243,6 +288,7 @@ function calculateHours(
   }
   
   // 旧ロジック（後方互換性のため残す）
+  // 注意: このロジックは削除しないこと
   let longTermDiscount = 0;
   if (longTermDiscountRate > 0) {
     longTermDiscount = Math.floor(basePrice * longTermDiscountRate);
@@ -283,7 +329,17 @@ function calculateHours(
   };
 }
 
-// 日付範囲から各日の時間スロットを生成する関数
+/**
+ * 日付範囲から各日の時間スロットを生成する関数
+ * 
+ * 機能:
+ * - 開始日から終了日までの各日付に対して時間スロットを作成
+ * - 各スロットは初期状態で開始時刻・終了時刻が空
+ * 
+ * @param startDate 開始日
+ * @param endDate 終了日
+ * @returns 各日の時間スロット配列
+ */
 function generateDayTimeSlots(startDate: Date | null, endDate: Date | null): DayTimeSlot[] {
   if (!startDate || !endDate) return [];
   
@@ -305,10 +361,30 @@ function generateDayTimeSlots(startDate: Date | null, endDate: Date | null): Day
   return slots;
 }
 
+/**
+ * 料金シミュレーターのプロップス
+ */
 interface PricingSimulatorProps {
+  /**
+   * 問い合わせリクエスト時のコールバック関数
+   * 計算結果をメッセージ形式で受け取る
+   */
   onInquiryRequest?: (message: string) => void;
 }
 
+/**
+ * 料金シミュレーターコンポーネント
+ * 
+ * 機能:
+ * - 日付・時間の入力
+ * - 複数日に跨る利用に対応
+ * - カメラマンオプションの選択
+ * - コラボタイプの選択
+ * - 料金の自動計算
+ * - 問い合わせメッセージの生成
+ * 
+ * 注意: 計算ロジックは変更しないこと
+ */
 export default function PricingSimulator({ onInquiryRequest }: PricingSimulatorProps = {}) {
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [startTime, setStartTime] = useState("");
@@ -355,7 +431,21 @@ export default function PricingSimulator({ onInquiryRequest }: PricingSimulatorP
     setPhotographerDays([]);
   }, [startDate, endDate]);
 
-  // 複数日の時間を合計する関数
+  /**
+   * 複数日の時間を合計する関数
+   * 
+   * 機能:
+   * - 各日の時間スロットを個別に計算
+   * - 全日の時間を合計
+   * - コラボ時間とコラボ以外の時間を分けて計算
+   * - 長時間パック割引を適用
+   * 
+   * @param slots 各日の時間スロット配列
+   * @param collaborationHours コラボ時間（時間単位）
+   * @returns 計算結果
+   * 
+   * 注意: この関数の計算ロジックは変更しないこと
+   */
   const calculateMultipleDays = (slots: DayTimeSlot[], collaborationHours: number): CalculationResult => {
     let totalNormalHours = 0;
     let totalNightHours = 0;
