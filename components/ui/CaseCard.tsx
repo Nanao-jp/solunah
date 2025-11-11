@@ -2,6 +2,7 @@
 
 import { LucideIcon } from "lucide-react";
 import ImagePlaceholder from "@/components/ui/ImagePlaceholder";
+import { fadeInUpStyle, getDelayByIndex } from "@/utils/animations";
 
 interface CaseCardProps {
   icon: LucideIcon;
@@ -13,9 +14,7 @@ export default function CaseCard({ icon: IconComponent, title, index }: CaseCard
   return (
     <div
       className="relative bg-slate-50/50 p-6 md:p-8"
-      style={{
-        animation: `fadeInUp 0.6s ease-out ${index * 0.1}s both`,
-      }}
+      style={fadeInUpStyle(getDelayByIndex(index, 0.1), 0.6)}
     >
       {/* 写真フレーム部分 */}
       <div className="relative">

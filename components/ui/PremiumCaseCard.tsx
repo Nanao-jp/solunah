@@ -2,6 +2,7 @@
 
 import { LucideIcon } from "lucide-react";
 import ImagePlaceholder from "@/components/ui/ImagePlaceholder";
+import { fadeInUpStyle, getDelayByIndex } from "@/utils/animations";
 
 interface PremiumCaseCardProps {
   icon: LucideIcon;
@@ -15,9 +16,7 @@ export default function PremiumCaseCard({ icon: IconComponent, title, index, onC
     <div
       className="relative cursor-pointer"
       onClick={onClick}
-      style={{
-        animation: `fadeInUp 0.8s ease-out ${index * 0.1}s both`,
-      }}
+      style={fadeInUpStyle(getDelayByIndex(index, 0.1), 0.8)}
     >
       {/* アルバムページ風の背景 */}
       <div className="relative bg-gradient-to-br from-slate-50 via-white to-slate-50/80 p-8 md:p-10 rounded-3xl">

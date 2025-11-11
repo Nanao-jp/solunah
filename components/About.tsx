@@ -2,6 +2,7 @@
 
 import SectionTitle from "@/components/ui/SectionTitle";
 import { features } from "@/data/features";
+import { fadeInUpStyle, getDelayByIndex } from "@/utils/animations";
 
 export default function About() {
   return (
@@ -17,9 +18,7 @@ export default function About() {
               <div
                 key={index}
                 className="relative group"
-                style={{
-                  animation: `fadeInUp 0.8s ease-out ${index * 0.15}s both`,
-                }}
+                style={fadeInUpStyle(getDelayByIndex(index, 0.15), 0.8)}
               >
                 <div className="flex flex-col md:flex-row items-start gap-8 md:gap-12">
                   <div className="flex-shrink-0">
@@ -50,9 +49,7 @@ export default function About() {
         {/* YOURNURSEについて */}
         <div
           className="relative"
-          style={{
-            animation: `fadeInUp 0.8s ease-out 0.6s both`,
-          }}
+          style={fadeInUpStyle(0.6, 0.8)}
         >
           <div className="absolute -left-8 top-0 bottom-0 w-1 bg-gradient-to-b from-orange-500/30 via-orange-500/20 to-transparent"></div>
           <div className="pl-12">

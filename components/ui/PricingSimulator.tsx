@@ -6,6 +6,17 @@ import DateInput from "./DateInput";
 import TimeRangeInput from "./TimeRangeInput";
 import RegularContractModal from "./RegularContractModal";
 import CollaborationModal from "./CollaborationModal";
+import {
+  NORMAL_RATE,
+  NIGHT_RATE,
+  NEW_YEAR_RATE,
+  PHOTOGRAPHER_PLANS,
+  EXTENSION_PRICE,
+  BASE_RATE_FOR_COLLAB,
+  getCollaborationDiscountRate,
+  type CollaborationType,
+} from "@/constants/pricing";
+import { isNewYearPeriod } from "@/constants/time";
 import "react-datepicker/dist/react-datepicker.css";
 
 interface DayTimeSlot {
@@ -49,38 +60,6 @@ interface CalculationResult {
   nonCollaborationLongTermDiscountRate: number;
 }
 
-const NORMAL_RATE = 8800; // 通常料金（5時～22時）
-const NIGHT_RATE = 11000; // 夜間料金（22時～翌5時）
-const NEW_YEAR_RATE = 11880; // 年末年始料金（12/30～1/3）
-
-const PHOTOGRAPHER_PLANS = {
-  none: { name: "なし", price: 0 },
-  mini: { name: "ミニプラン", price: 15000, duration: 1.0 }, // 60分 = 1時間
-  standard: { name: "スタンダード", price: 18000, duration: 1.5 }, // 90分 = 1.5時間
-};
-
-type CollaborationType = "with-face" | "without-face" | "no-collab";
-
-const EXTENSION_PRICE = 3000; // 延長30分毎の料金
-const BASE_RATE_FOR_COLLAB = 8800; // コラボ割引の基準となる基本料金
-
-// コラボタイプに応じた割引率を取得
-function getCollaborationDiscountRate(collaborationType: CollaborationType): number {
-  switch (collaborationType) {
-    case "with-face":
-      return 0.25; // 25%
-    case "without-face":
-      return 0.10; // 10%
-    case "no-collab":
-      return 0; // 0%
-  }
-}
-
-function isNewYearPeriod(date: Date): boolean {
-  const month = date.getMonth() + 1; // 0-11 -> 1-12
-  const day = date.getDate();
-  return (month === 12 && day >= 30) || (month === 1 && day <= 3);
-}
 
 function calculateHours(
   startDate: string,

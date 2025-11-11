@@ -2,7 +2,8 @@
 
 import { Calendar, ArrowRight } from "lucide-react";
 import Link from "next/link";
-import { NewsItem } from "@/data/news";
+import type { NewsItem } from "@/types/news";
+import { fadeInUpStyle, getDelayByIndex } from "@/utils/animations";
 
 interface NewsItemProps {
   news: NewsItem;
@@ -15,9 +16,7 @@ export default function NewsItemComponent({ news, index, href = "/news" }: NewsI
     <Link
       href={href}
       className="block group border-b border-slate-200 last:border-b-0 py-8 hover:bg-slate-50/50 transition-all duration-300"
-      style={{
-        animation: `fadeInUp 0.6s ease-out ${index * 0.15}s both`,
-      }}
+      style={fadeInUpStyle(getDelayByIndex(index, 0.15), 0.6)}
     >
       <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
         <div className="flex-1">

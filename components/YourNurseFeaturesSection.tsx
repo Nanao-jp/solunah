@@ -3,6 +3,7 @@
 import SectionTitle from "@/components/ui/SectionTitle";
 import YourNurseLogoWithText from "@/components/ui/YourNurseLogoWithText";
 import Glassmorphism from "@/components/ui/Glassmorphism";
+import { fadeInUpStyle } from "@/utils/animations";
 
 /**
  * YOUR NURSEの特徴をロゴと共に表示するセクション
@@ -37,9 +38,7 @@ export default function YourNurseFeaturesSection() {
         {/* メッセージテキスト */}
         <div
           className="text-center mt-12 relative z-10"
-          style={{
-            animation: `fadeInUp 0.8s ease-out 0.2s both`,
-          }}
+          style={fadeInUpStyle(0.2, 0.8)}
         >
           <p className="text-lg md:text-xl text-slate-600 leading-relaxed font-light max-w-3xl mx-auto">
             いつでも、どこでも、あなたの健康をサポートします

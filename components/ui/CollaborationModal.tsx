@@ -1,5 +1,7 @@
 "use client";
 
+import BaseModal from "@/components/ui/BaseModal";
+
 interface CollaborationModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -9,28 +11,14 @@ export default function CollaborationModal({
   isOpen,
   onClose,
 }: CollaborationModalProps) {
-  if (!isOpen) return null;
-
   return (
-    <div
-      className="fixed inset-0 z-[99997] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
-      onClick={onClose}
+    <BaseModal
+      isOpen={isOpen}
+      onClose={onClose}
+      title="【コラボについて】"
+      maxWidth="md"
     >
-      <div
-        className="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-8"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <button
-          type="button"
-          onClick={onClose}
-          className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 transition-colors"
-        >
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </button>
-        <h2 className="text-2xl font-light text-slate-900 mb-6">【コラボについて】</h2>
-        <div className="space-y-4 text-slate-700 font-light">
+      <div className="space-y-4 text-slate-700 font-light">
           <p>
             カメラマンオプションをご利用いただく際に、コラボタイプを選択いただけます。
           </p>
@@ -67,8 +55,7 @@ export default function CollaborationModal({
             </p>
           </div>
         </div>
-      </div>
-    </div>
+    </BaseModal>
   );
 }
 

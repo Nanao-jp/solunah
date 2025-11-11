@@ -3,6 +3,7 @@
 import SectionTitle from "@/components/ui/SectionTitle";
 import ImagePlaceholder from "@/components/ui/ImagePlaceholder";
 import { allServices } from "@/data/services";
+import { fadeInUpStyle, getDelayByIndex } from "@/utils/animations";
 
 export default function Services() {
   const services = allServices;
@@ -20,9 +21,7 @@ export default function Services() {
               <div
                 key={index}
                 className="flex flex-col md:flex-row items-stretch gap-12"
-                style={{
-                  animation: `fadeInUp 0.6s ease-out ${index * 0.1}s both`,
-                }}
+                style={fadeInUpStyle(getDelayByIndex(index, 0.1), 0.6)}
               >
                 {/* テキスト部分 */}
                 <div className="flex-1 w-full">
