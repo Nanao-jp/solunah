@@ -4,7 +4,6 @@ import { useState, useMemo, useEffect, useCallback } from "react";
 import { Calculator, Clock, Camera, Percent, Calendar, Mail } from "lucide-react";
 import DateInput from "./DateInput";
 import TimeRangeInput from "./TimeRangeInput";
-import RegularContractModal from "./RegularContractModal";
 import CollaborationModal from "./CollaborationModal";
 import {
   NORMAL_RATE,
@@ -418,12 +417,10 @@ export default function PricingSimulator({ onInquiryRequest }: PricingSimulatorP
       return updated;
     });
   }, []);
-  const [isRegularContract, setIsRegularContract] = useState(false);
   const [photographerPlan, setPhotographerPlan] = useState<keyof typeof PHOTOGRAPHER_PLANS>("none");
   const [collaborationType, setCollaborationType] = useState<CollaborationType>("no-collab");
   const [extensionCount, setExtensionCount] = useState<number>(0);
   const [photographerDays, setPhotographerDays] = useState<number[]>([]); // カメラマンを使う日のインデックス
-  const [isRegularModalOpen, setIsRegularModalOpen] = useState(false);
   const [isCollaborationModalOpen, setIsCollaborationModalOpen] = useState(false);
 
   // 日付範囲が変更されたら、カメラマンの日選択もリセット
@@ -733,17 +730,12 @@ export default function PricingSimulator({ onInquiryRequest }: PricingSimulatorP
       }
     }
 
-    // 定期契約
-    if (isRegularContract) {
-      lines.push("定期契約: 適用（詳細は別途ご相談）");
-    }
-
     lines.push("");
     lines.push(`【合計金額】`);
     lines.push(`¥${result.totalPrice.toLocaleString()}`);
 
     return lines.join("\n");
-  }, [result, dayTimeSlots, startDate, endDate, startTime, endTime, photographerPlan, extensionCount, collaborationType, photographerDays, isRegularContract]);
+  }, [result, dayTimeSlots, startDate, endDate, startTime, endTime, photographerPlan, extensionCount, collaborationType, photographerDays]);
 
   const handleInquiryClick = useCallback(() => {
     const message = formatInquiryMessage;
@@ -823,26 +815,6 @@ export default function PricingSimulator({ onInquiryRequest }: PricingSimulatorP
 
       {/* オプション */}
       <div className="space-y-4">
-        <div className="flex items-center gap-3">
-          <input
-            type="checkbox"
-            id="regularContract"
-            checked={isRegularContract}
-            onChange={(e) => setIsRegularContract(e.target.checked)}
-            className="w-5 h-5 rounded border-slate-300 text-orange-500 focus:ring-orange-500"
-          />
-          <label htmlFor="regularContract" className="text-slate-700 font-light cursor-pointer">
-            定期契約
-          </label>
-          <button
-            type="button"
-            onClick={() => setIsRegularModalOpen(true)}
-            className="text-orange-500 hover:text-orange-600 text-sm font-light underline transition-colors"
-          >
-            詳しくはこちら
-          </button>
-        </div>
-
         <div>
           <label className="block text-sm font-medium text-slate-700 mb-2">
             <Camera className="w-4 h-4 inline mr-2 text-orange-500" />
@@ -868,6 +840,9 @@ export default function PricingSimulator({ onInquiryRequest }: PricingSimulatorP
               </option>
             ))}
           </select>
+          <p className="mt-2 text-xs text-slate-500 font-light">
+            ※定期契約はお問い合わせでご相談ください
+          </p>
         </div>
 
         {/* 複数日の場合、カメラマンを使う日を選択 */}
@@ -1084,12 +1059,6 @@ export default function PricingSimulator({ onInquiryRequest }: PricingSimulatorP
                 </div>
               )}
 
-              {isRegularContract && (
-                <div className="pt-2 text-xs text-slate-500 italic">
-                  ※定期契約の割引は別途ご相談ください
-                </div>
-              )}
-
               <div className="flex justify-between pt-4 border-t-2 border-orange-200 mt-4">
                 <span className="text-lg font-medium text-slate-900">合計金額</span>
                 <span className="text-2xl font-light text-orange-600">¥{result.totalPrice.toLocaleString()}</span>
@@ -1113,7 +1082,6 @@ export default function PricingSimulator({ onInquiryRequest }: PricingSimulatorP
         </div>
       )}
 
-      <RegularContractModal isOpen={isRegularModalOpen} onClose={() => setIsRegularModalOpen(false)} />
       <CollaborationModal isOpen={isCollaborationModalOpen} onClose={() => setIsCollaborationModalOpen(false)} />
     </div>
   );

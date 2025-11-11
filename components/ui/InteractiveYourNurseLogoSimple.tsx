@@ -29,7 +29,7 @@ const heartDetails: HeartDetail[] = [
   },
   {
     title: "1時間から",
-    description: "最短1時間から15分単位での柔軟なプランで対応可能。\n※長時間で各種割引適応あり",
+    description: "最短1時間から15分単位での柔軟なプランで対応可能\n※長時間で各種割引適応あり",
   },
   {
     title: "看護師経験5年以上",

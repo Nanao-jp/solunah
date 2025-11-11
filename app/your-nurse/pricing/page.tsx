@@ -109,77 +109,59 @@ export default function YourNursePricingPage() {
         </div>
       </section>
 
-      {/* 定期契約・カメラマンコラボセクション */}
+      {/* カメラマンオプションセクション */}
       <section className="py-32 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <div className="grid md:grid-cols-2 gap-8">
-            {/* 定期契約 */}
-            <div className="relative">
-              <div className="relative px-8 py-12 h-full rounded-2xl overflow-hidden">
-                <Glassmorphism blur="xl" opacity={50} hoverOpacity={60} hoverEffect={true} />
-                
-                <div className="relative z-10">
-                  <h3 className="text-2xl md:text-3xl font-light text-slate-900 mb-4 tracking-wide">
-                    定期契約
+          <div className="relative">
+            <div className="relative px-8 py-12 rounded-2xl overflow-hidden">
+              <Glassmorphism blur="xl" opacity={50} hoverOpacity={60} hoverEffect={true} />
+              
+              <div className="relative z-10">
+                <div className="flex items-center gap-3 mb-4">
+                  <Camera className="w-8 h-8 text-orange-500" />
+                  <h3 className="text-2xl md:text-3xl font-light text-slate-900 tracking-wide">
+                    カメラマンオプション
                   </h3>
-                  <p className="text-slate-600 font-light">
-                    ご契約内容により割引適用あり
-                  </p>
+                  <span className="text-sm text-slate-500 font-light">現在確認中</span>
                 </div>
-              </div>
-            </div>
-
-            {/* カメラマンコラボ */}
-            <div className="relative">
-              <div className="relative px-8 py-12 h-full rounded-2xl overflow-hidden">
-                <Glassmorphism blur="xl" opacity={50} hoverOpacity={60} hoverEffect={true} />
+                <p className="text-slate-600 font-light mb-6">
+                  現状、福岡県在住のカメラマンとコラボして諦めていた夢を叶えたことを想い出に残せる。今後、地域拡大予定
+                </p>
                 
-                <div className="relative z-10">
-                  <div className="flex items-center gap-3 mb-4">
-                    <Camera className="w-8 h-8 text-orange-500" />
-                    <h3 className="text-2xl md:text-3xl font-light text-slate-900 tracking-wide">
-                      カメラマンコラボ
-                    </h3>
-                    <span className="text-sm text-slate-500 font-light">現在確認中</span>
-                  </div>
-                  <p className="text-slate-600 font-light mb-6">
-                    現状、福岡県在住のカメラマンとコラボして諦めていた夢を叶えたことを想い出に残せる。今後、地域拡大予定
-                  </p>
-                  
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-sm whitespace-nowrap">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-base whitespace-nowrap">
                       <thead>
                         <tr className="border-b border-slate-200">
-                          <th className="py-2 px-3 sm:px-4 font-light text-slate-900 text-left whitespace-nowrap">プラン</th>
-                          <th className="py-2 px-3 sm:px-4 font-light text-slate-900 text-left whitespace-nowrap">料金</th>
-                          <th className="py-2 px-3 sm:px-4 font-light text-slate-900 text-left whitespace-nowrap">時間</th>
-                          <th className="py-2 px-3 sm:px-4 font-light text-slate-900 text-left whitespace-nowrap">編集枚数</th>
+                          <th className="py-3 px-4 sm:px-6 font-light text-slate-900 text-left whitespace-nowrap">プラン</th>
+                          <th className="py-3 px-4 sm:px-6 font-light text-slate-900 text-left whitespace-nowrap">料金</th>
+                          <th className="py-3 px-4 sm:px-6 font-light text-slate-900 text-left whitespace-nowrap">時間</th>
+                          <th className="py-3 px-4 sm:px-6 font-light text-slate-900 text-left whitespace-nowrap">編集枚数</th>
                         </tr>
                       </thead>
                       <tbody>
                         <tr className="border-b border-slate-100">
-                          <td className="py-2 px-3 sm:px-4 font-light text-slate-600 whitespace-nowrap">ミニプラン</td>
-                          <td className="py-2 px-3 sm:px-4 font-light text-slate-900 whitespace-nowrap">¥15,000</td>
-                          <td className="py-2 px-3 sm:px-4 font-light text-slate-600 whitespace-nowrap">60分</td>
-                          <td className="py-2 px-3 sm:px-4 font-light text-slate-600 whitespace-nowrap">40枚</td>
+                          <td className="py-3 px-4 sm:px-6 font-light text-slate-600 whitespace-nowrap">ミニプラン</td>
+                          <td className="py-3 px-4 sm:px-6 font-light text-slate-900 whitespace-nowrap">¥15,000</td>
+                          <td className="py-3 px-4 sm:px-6 font-light text-slate-600 whitespace-nowrap">60分</td>
+                          <td className="py-3 px-4 sm:px-6 font-light text-slate-600 whitespace-nowrap">40枚</td>
                         </tr>
                         <tr className="border-b border-slate-100">
-                          <td className="py-2 px-3 sm:px-4 font-light text-slate-600 whitespace-nowrap">スタンダード</td>
-                          <td className="py-2 px-3 sm:px-4 font-light text-slate-900 whitespace-nowrap">¥18,000</td>
-                          <td className="py-2 px-3 sm:px-4 font-light text-slate-600 whitespace-nowrap">90分</td>
-                          <td className="py-2 px-3 sm:px-4 font-light text-slate-600 whitespace-nowrap">50枚</td>
+                          <td className="py-3 px-4 sm:px-6 font-light text-slate-600 whitespace-nowrap">スタンダード</td>
+                          <td className="py-3 px-4 sm:px-6 font-light text-slate-900 whitespace-nowrap">¥18,000</td>
+                          <td className="py-3 px-4 sm:px-6 font-light text-slate-600 whitespace-nowrap">90分</td>
+                          <td className="py-3 px-4 sm:px-6 font-light text-slate-600 whitespace-nowrap">50枚</td>
                         </tr>
                         <tr>
-                          <td className="py-2 px-3 sm:px-4 font-light text-slate-600 whitespace-nowrap">延長30分毎に</td>
-                          <td className="py-2 px-3 sm:px-4 font-light text-slate-900 whitespace-nowrap">¥3,000</td>
-                          <td className="py-2 px-3 sm:px-4 font-light text-slate-600 whitespace-nowrap">30分</td>
-                          <td className="py-2 px-3 sm:px-4 font-light text-slate-600 whitespace-nowrap">+10枚</td>
+                          <td className="py-3 px-4 sm:px-6 font-light text-slate-600 whitespace-nowrap">延長30分毎に</td>
+                          <td className="py-3 px-4 sm:px-6 font-light text-slate-900 whitespace-nowrap">¥3,000</td>
+                          <td className="py-3 px-4 sm:px-6 font-light text-slate-600 whitespace-nowrap">30分</td>
+                          <td className="py-3 px-4 sm:px-6 font-light text-slate-600 whitespace-nowrap">+10枚</td>
                         </tr>
                       </tbody>
                     </table>
                   </div>
                   
-                  <p className="mt-6 text-sm text-slate-600 font-light">
+                  <p className="mt-6 text-base text-slate-600 font-light">
                     編集前後全データお渡し<br />
                     オンラインドライブ... 無料<br />
                     USB... ¥2,200
@@ -188,7 +170,6 @@ export default function YourNursePricingPage() {
               </div>
             </div>
           </div>
-        </div>
       </section>
 
       {/* 事例セクション */}
@@ -212,11 +193,11 @@ export default function YourNursePricingPage() {
               timeInfo="11:00～14:00　total:3時間"
               price="¥40,440"
               breakdown={[
-                "内訳：カメラマンコラボの時間(顔出し提供25％off)",
+                "内訳：カメラマンオプションの時間(顔出し提供25％off)",
                 "¥8,800×1.5時間×0.75⁼¥9,900",
                 "残りの時間",
                 "¥8,800×1.5時間×0.95⁼¥12,540",
-                "カメラマンコラボ(スタンダード:90分)　¥18,000",
+                "カメラマンオプション(スタンダード:90分)　¥18,000",
                 "データオンラインドライブ　¥0",
               ]}
               timeIcon="clock"
