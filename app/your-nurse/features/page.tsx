@@ -79,7 +79,13 @@ export default function YourNurseFeaturesPage() {
     <>
       <YourNurseHeroSection 
         title="事例紹介"
-        description="YOUR NURSEが提供する様々なシーンでの看護サポート事例をご紹介します。"
+        description={
+          <>
+            どのようなことが出来るのか一例を載せています。
+            <br />
+            こんなことも出来る？等はお気軽にお問い合わせ下さい。
+          </>
+        }
       />
 
       {/* 事例紹介セクション */}

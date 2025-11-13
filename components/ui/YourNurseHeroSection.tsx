@@ -24,9 +24,17 @@ export default function YourNurseHeroSection({ title, description }: YourNurseHe
                 {title}
               </h1>
               {description && (
-                <p className="text-xl md:text-2xl text-slate-700 leading-relaxed font-light">
-                  {description}
-                </p>
+                <div className="text-xl md:text-2xl text-slate-700 leading-relaxed font-light">
+                  {typeof description === 'string' ? (
+                    description.split('\n').map((line, index) => (
+                      <p key={index} className={index > 0 ? "mt-4" : ""}>
+                        {line}
+                      </p>
+                    ))
+                  ) : (
+                    description
+                  )}
+                </div>
               )}
             </div>
           </div>

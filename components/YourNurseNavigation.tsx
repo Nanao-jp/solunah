@@ -41,7 +41,7 @@ export default function YourNurseNavigation() {
     { name: "私たちの想い", href: "/your-nurse/services" },
     { name: "事例紹介", href: "/your-nurse/features" },
     { name: "料金", href: "/your-nurse/pricing" },
-    { name: "お問い合わせ", href: "/your-nurse/contact" },
+    { name: "お問い合わせ(無料)", href: "/your-nurse/contact" },
   ];
 
   const isActive = (href: string) => {

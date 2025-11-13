@@ -1,6 +1,6 @@
 "use client";
 
-import { Mail } from "lucide-react";
+import { Mail, Phone, Fax } from "lucide-react";
 import SectionTitle from "@/components/ui/SectionTitle";
 import SunCard from "@/components/ui/SunCard";
 import ImagePlaceholder from "@/components/ui/ImagePlaceholder";
@@ -17,12 +17,7 @@ export default function Contact() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionTitle title="お問い合わせ" />
 
-        <div
-          className="flex flex-col md:flex-row items-stretch gap-12 group"
-          style={{
-            animation: `fadeInUp 0.8s ease-out both`,
-          }}
-        >
+        <div className="grid md:grid-cols-2 gap-12">
           {/* フォーム部分 */}
           <div className="flex-1 w-full flex">
             <SunCard className="p-8 md:p-10 hover:shadow-xl transition-all duration-300 flex-1 flex flex-col">
@@ -30,12 +25,48 @@ export default function Contact() {
             </SunCard>
           </div>
 
-          {/* 画像部分 */}
-          <div className="flex-1 w-full flex">
-            <ImagePlaceholder 
-              icon={Mail} 
-              className="shadow-xl group-hover:shadow-2xl transition-all duration-300 flex-1" 
-            />
+          {/* 連絡先情報 */}
+          <div className="flex-1 w-full flex flex-col">
+            <SunCard className="p-8 md:p-10 hover:shadow-xl transition-all duration-300 flex-1 flex flex-col">
+              <SectionTitle title="連絡先情報" />
+              <div className="mt-8 space-y-8">
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 rounded-lg bg-orange-100 flex items-center justify-center flex-shrink-0">
+                    <Mail className="w-6 h-6 text-orange-500" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-medium text-slate-900 mb-2">メール</h3>
+                    <p className="text-slate-600 font-light">
+                      info@solunah.com
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 rounded-lg bg-orange-100 flex items-center justify-center flex-shrink-0">
+                    <Phone className="w-6 h-6 text-orange-500" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-medium text-slate-900 mb-2">主番号(転送あり)</h3>
+                    <p className="text-slate-600 font-light">
+                      092-692-7557
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 rounded-lg bg-orange-100 flex items-center justify-center flex-shrink-0">
+                    <Fax className="w-6 h-6 text-orange-500" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-medium text-slate-900 mb-2">FAX番号</h3>
+                    <p className="text-slate-600 font-light">
+                      092-692-7550
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </SunCard>
           </div>
         </div>
       </div>

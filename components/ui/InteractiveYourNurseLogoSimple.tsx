@@ -21,7 +21,7 @@ interface HeartDetail {
 const heartDetails: HeartDetail[] = [
   {
     title: "24時間365日",
-    description: "保険内ではカバーしづらい長時間、夜間、休日にも臨機応変に対応可能",
+    description: "保険内ではカバーしづらい長時間·夜間·休日にも臨機応変に対応可能",
   },
   {
     title: "全国対応",

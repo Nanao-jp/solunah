@@ -18,7 +18,7 @@ export const PHOTOGRAPHER_PLANS = {
 export type CollaborationType = "with-face" | "without-face" | "no-collab";
 
 // 延長料金
-export const EXTENSION_PRICE = 3000; // 延長30分毎の料金
+export const EXTENSION_PRICE = 5000; // 延長30分毎の料金
 
 // コラボ割引の基準となる基本料金
 export const BASE_RATE_FOR_COLLAB = 8800;

@@ -69,7 +69,7 @@ export default function BaseModal({
         {(title || showCloseButton) && (
           <div className="relative px-8 pt-8 pb-6 border-b border-slate-200">
             {title && (
-              <h2 className="text-2xl font-light text-slate-900 pr-8">
+              <h2 className="text-lg md:text-2xl font-light text-slate-900 pr-8 whitespace-nowrap">
                 {title}
               </h2>
             )}

@@ -11,7 +11,7 @@ export default function YourNurseContactPage() {
       <section className="relative min-h-[50vh] flex items-center justify-center overflow-hidden bg-white pt-32 pb-20 px-4 sm:px-6 lg:px-8">
         <div className="relative z-10 max-w-6xl mx-auto w-full text-center">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-light text-slate-900 mb-6 tracking-wide">
-            お問い合わせ
+            お問い合わせ(無料)
           </h1>
           <p className="text-xl md:text-2xl text-slate-700 leading-relaxed font-light">
             ご質問やご相談がございましたら、お気軽にお問い合わせください

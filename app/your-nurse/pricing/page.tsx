@@ -47,8 +47,10 @@ export default function YourNursePricingPage() {
                 <h1 className="text-4xl md:text-5xl lg:text-6xl font-light text-slate-900 mb-6 tracking-wide">
                   料金について
                 </h1>
-                <p className="text-xl md:text-2xl text-slate-700 leading-relaxed font-light">
-                  お客様のニーズに合わせた柔軟な料金プランをご用意しています
+                <p className="text-lg md:text-xl text-slate-700 leading-relaxed font-light">
+                  少しでも長くスペシャルタイムを過ごしていただけるよう長時間パックもご準備しております。
+                  <br />
+                  ご利用者様のニーズに合わせて料金シュミレーターが出来、そのままお問い合わせも可能です。
                 </p>
               </div>
             </div>
@@ -143,7 +145,7 @@ export default function YourNursePricingPage() {
                           <td className="py-3 px-4 sm:px-6 font-light text-slate-600 whitespace-nowrap">ミニプラン</td>
                           <td className="py-3 px-4 sm:px-6 font-light text-slate-900 whitespace-nowrap">¥15,000</td>
                           <td className="py-3 px-4 sm:px-6 font-light text-slate-600 whitespace-nowrap">60分</td>
-                          <td className="py-3 px-4 sm:px-6 font-light text-slate-600 whitespace-nowrap">40枚</td>
+                          <td className="py-3 px-4 sm:px-6 font-light text-slate-600 whitespace-nowrap">30枚</td>
                         </tr>
                         <tr className="border-b border-slate-100">
                           <td className="py-3 px-4 sm:px-6 font-light text-slate-600 whitespace-nowrap">スタンダード</td>
@@ -153,7 +155,7 @@ export default function YourNursePricingPage() {
                         </tr>
                         <tr>
                           <td className="py-3 px-4 sm:px-6 font-light text-slate-600 whitespace-nowrap">延長30分毎に</td>
-                          <td className="py-3 px-4 sm:px-6 font-light text-slate-900 whitespace-nowrap">¥3,000</td>
+                          <td className="py-3 px-4 sm:px-6 font-light text-slate-900 whitespace-nowrap">¥5,000</td>
                           <td className="py-3 px-4 sm:px-6 font-light text-slate-600 whitespace-nowrap">30分</td>
                           <td className="py-3 px-4 sm:px-6 font-light text-slate-600 whitespace-nowrap">+10枚</td>
                         </tr>
@@ -161,11 +163,28 @@ export default function YourNursePricingPage() {
                     </table>
                   </div>
                   
-                  <p className="mt-6 text-base text-slate-600 font-light">
-                    編集前後全データお渡し<br />
-                    オンラインドライブ... 無料<br />
-                    USB... ¥2,200
-                  </p>
+                  <div className="mt-6 space-y-4">
+                    <p className="text-base text-slate-600 font-light">
+                      当日撮影した全データお渡し<br />
+                      オンラインドライブ…無料<br />
+                      USB…¥2,200
+                    </p>
+                    <div className="pt-4 border-t border-slate-200">
+                      <p className="text-sm text-slate-600 font-light mb-3">
+                        ※弊社HPやSNSでお写真を使わせていただけるのであれば
+                      </p>
+                      <div className="space-y-2 text-sm text-slate-600 font-light pl-4">
+                        <p>顔出しあり　カメラマンコラボの時間のみ25％off</p>
+                        <p>顔出しなし　カメラマンコラボの時間のみ10％off</p>
+                        <p>残りの時間は本来の時間の長時間パックの割引額対象</p>
+                        <div className="pl-4 space-y-1 mt-2">
+                          <p>3～8時間　5％</p>
+                          <p>9～11時間　10％</p>
+                          <p>12時間以上　15％</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
