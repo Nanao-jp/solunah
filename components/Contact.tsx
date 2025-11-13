@@ -1,6 +1,6 @@
 "use client";
 
-import { Mail, Phone, Fax } from "lucide-react";
+import { Mail, Phone, Printer } from "lucide-react";
 import SectionTitle from "@/components/ui/SectionTitle";
 import SunCard from "@/components/ui/SunCard";
 import ImagePlaceholder from "@/components/ui/ImagePlaceholder";
@@ -56,7 +56,7 @@ export default function Contact() {
 
                 <div className="flex items-start gap-4">
                   <div className="w-12 h-12 rounded-lg bg-orange-100 flex items-center justify-center flex-shrink-0">
-                    <Fax className="w-6 h-6 text-orange-500" />
+                    <Printer className="w-6 h-6 text-orange-500" />
                   </div>
                   <div>
                     <h3 className="text-lg font-medium text-slate-900 mb-2">FAX番号</h3>
